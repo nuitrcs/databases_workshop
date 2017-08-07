@@ -1,28 +1,18 @@
 .reveal h1 {
 	font-size: 2em;
-}
-
-.reveal .purple a {
-	color: #B6ACD1;
-}
-
-.reveal .purple a:hover {
-	color: #E4E0EE;
-}
-
-html.purple body {
-	color: #401F68;
-	background-color: #401F68;
-}
-
-body {
-	color: #401F68;
+	color: #401F68
 }
 
 .reveal a {
-	color: #B6ACD1;
+	color: #401F68;
 }
 
 .reveal a:hover {
-	color: #E4E0EE;
+	color: #836EAA;
 }
+
+ body {
+	color: #342F2E;
+	background-color: #ffffff;
+}
+
