@@ -15,7 +15,7 @@
 
 ---?image=presentation_assets/serverroom.jpeg
 
-## <span style="color: #ffffff;">Sometimes this</span>
+## <span style="color: #ffffff; text-align:center;">Sometimes this</span>
 
 ---
 
@@ -40,7 +40,9 @@
 ## Relational Database Management Systems
 
 <img src="http://logos-download.com/wp-content/uploads/2016/10/PostgreSQL_logo_Postgre_SQL.png" 
-width="200"> <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/SQLite370.svg/500px-SQLite370.svg.png" width="200"> <img src="https://upload.wikimedia.org/wikipedia/en/thumb/6/62/MySQL.svg/640px-MySQL.svg.png" width="200"> <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Oracle_logo.svg/2000px-Oracle_logo.svg.png" width="200"> <img src="http://vignette3.wikia.nocookie.net/logopedia/images/c/cd/MicrosoftSQLServer.png/revision/latest?cb=20150614233628" width="200">
+width="200"> <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/SQLite370.svg/500px-SQLite370.svg.png" width="200"> <img src="https://upload.wikimedia.org/wikipedia/en/thumb/6/62/MySQL.svg/640px-MySQL.svg.png" width="200"> 
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Oracle_logo.svg/2000px-Oracle_logo.svg.png" width="200"> <img src="http://vignette3.wikia.nocookie.net/logopedia/images/c/cd/MicrosoftSQLServer.png/revision/latest?cb=20150614233628" width="200">
 
 --- 
 
@@ -54,9 +56,13 @@ Distributed (Hbase, Impala)
 
 ---
 
-## Small single file *or* large and distributed
-<br><br>
-## Local *or* on many servers
+## Small single file
+*or*
+## large and distributed
+
+## Local
+*or* 
+## on many servers
 
 ---
 
@@ -69,6 +75,9 @@ SQL: **_S_**tructured **_Q_**uery **_L_**anguage
 
 ---
 
+## Why?
+<hr>
+
 Most common
 
 Suitable for a wide variety of cases
@@ -80,21 +89,22 @@ Familiar structure
 ---
 
 ## Tables of related data
+<hr>
 
-* Rows of records/observations
-* Columns of attributes or fields
-* Tables are linked together (relational model of data) 
+Rows of records/observations
 
----
+Columns of attributes or fields
 
-![example](https://bam.files.bbci.co.uk/bam/live/content/zg9syrd/large)
-
-<small>[Source: BBC](https://bam.files.bbci.co.uk/bam/live/content/zg9syrd/large)</small>
-
+Tables are linked together (relational model of data) 
 
 ---
 
-# SQL/Relational Databases: when and why
+![example](https://bam.files.bbci.co.uk/bam/live/content/zg9syrd/large) <small>[Source: BBC](https://bam.files.bbci.co.uk/bam/live/content/zg9syrd/large)</small>
+
+
+---
+
+# When to Use SQL/Relational Databases
 
 ---
 
@@ -109,38 +119,49 @@ Familiar structure
 ## When to Consider
 <hr>
 
-* Current system is unmanageable
-* A lot of duplicated information 
-* Different types of observations that are related to each other
-* Access or analyze a subset of observations
+Current system is unmanageable
+
+A lot of duplicated information 
+
+Different types of observations that are related to each other
+
+Access or analyze a subset of observations
+
+---
 
 ## Other Factors
 <hr>
 
-* Multiple people need access to the same, current data
-* Individual observations (records) are changing or being added
-* Enforce constraints about data values, structure, and relationships
+Multiple people need access to the same, current data
+
+Individual observations (records) are changing or being added
+
+Enforce constraints about data values, structure, and relationships
 
 ---
 
 ## Look at other solutions when
 <hr>
 
-* Entire dataset is generated together
-* Data is static
-* Data that would be in a table is used as a complete unit
+Entire dataset is generated together
+
+Data is static
+
+Data that would be in a table is used as a complete unit
 
 ---
 
 ## How does it work?
 
-**Server** (usually)
+**SERVER** (usually): 
 
-* Holds the data
-* Manages access and permissions
-* Can run locally (your own computer) or on a remote system
+&nbsp;&nbsp;&nbsp;&nbsp;Holds the data
 
-**Client** program connects to the server to access the data
+&nbsp;&nbsp;&nbsp;&nbsp;Manages access and permissions
+
+&nbsp;&nbsp;&nbsp;&nbsp;Runs locally (your own computer) or on a remote system
+
+**CLIENT** program connects to the server to access the data
 
 
 

@@ -4,6 +4,10 @@ This workshop uses PostgreSQL.  Much of the material applies generically to SQL 
 
 This workshop uses the database discussed in, and follows much of the content of, the [PostgreSQL Tutorial](http://www.postgresqltutorial.com/).
 
+## Presentation Materials
+
+[![GitPitch](https://gitpitch.com/assets/badge.svg)](https://gitpitch.com/nuitrcs/databases_workshop/)
+
 ## Note
 
 These materials are created for an in-person workshop.  Participants will be connecting to a database server that will only be active for the duration of the workshop.  In-person workshop participants do not need to install PostgreSQL.
@@ -21,6 +25,12 @@ Typing long commands in a terminal can be tedious.  We also recommend you instal
 This repository also includes materials for connecting to a database using Python or R.  For Python, you will need to install the `psycopg2` package.  For R, you will need the package `RPostgreSQL`.
 
 ## Resources
+
+### Background
+
+[Basic Explanation of Relational Databases](http://www.bbc.co.uk/education/guides/ztsvb9q/revision/1): from the BBC, a quick explanation of relational databases
+
+### Additional Exercises
 
 [PostgreSQL Exercises](https://pgexercises.com/): interactive, online exercises to practice SQL skills in a PostgreSQL environment.  
 
