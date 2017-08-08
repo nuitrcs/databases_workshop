@@ -14,9 +14,9 @@
 # Databases can take many forms...
 
 ---?image=presentation_assets/serverroom.jpeg
-
-## <span style="color: #ffffff; text-align:center;">Sometimes this</span>
-
+<section style="text-align: center;">
+## <span style="color: #ffffff;">Sometimes this</span>
+</section>
 ---
 
 ## Files on disk
@@ -60,7 +60,9 @@ Distributed (Hbase, Impala)
 *or*
 ## large and distributed
 
-## Local
+---
+
+## Running Locally
 *or* 
 ## on many servers
 
@@ -123,7 +125,7 @@ Current system is unmanageable
 
 A lot of duplicated information 
 
-Different types of observations that are related to each other
+Different types of *related* observations 
 
 Access or analyze a subset of observations
 
@@ -140,7 +142,7 @@ Enforce constraints about data values, structure, and relationships
 
 ---
 
-## Look at other solutions when
+## Look elsewhere when
 <hr>
 
 Entire dataset is generated together
@@ -159,7 +161,7 @@ Data that would be in a table is used as a complete unit
 
 &nbsp;&nbsp;&nbsp;&nbsp;Manages access and permissions
 
-&nbsp;&nbsp;&nbsp;&nbsp;Runs locally (your own computer) or on a remote system
+&nbsp;&nbsp;&nbsp;&nbsp;Runs locally or on a remote system
 
 **CLIENT** program connects to the server to access the data
 
