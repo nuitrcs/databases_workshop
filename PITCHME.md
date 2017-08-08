@@ -4,24 +4,29 @@
 
 # What is a Database?
 
+<section data-background-color="#401F68">
 ---
 
-Structured or organized collection of data
-
+<span style="color:#ffffff;">Structured or organized collection of data</span>
+</section>
 ---
 
 # Databases can take many forms...
 
+---?image=presentation_assets/serverroom.jpg
+
+## Sometimes this
+
 ---
 
-## Set of files on disk
+## Files on disk
 
 ```
-20160101.csv
-20160102.csv
-20160103.csv
-20160104.csv
-20160105.csv
+20160101.csv	20160601.csv
+20160102.csv	20160602.csv
+20160103.csv	20160603.csv
+20160104.csv	20160604.csv
+20160105.csv	20160605.csv
 ```
 
 ---
@@ -32,17 +37,18 @@ Structured or organized collection of data
 
 ---
 
-## Traditional relational database systems 
+## Relational Database Management Systems
 
-PostgreSQL ![postgres](http://logos-download.com/wp-content/uploads/2016/10/PostgreSQL_logo_Postgre_SQL.png =200px)
+<img src="http://logos-download.com/wp-content/uploads/2016/10/PostgreSQL_logo_Postgre_SQL.png" 
+width="200"> 
 
-SQLite ![sqlite](https://commons.wikimedia.org/wiki/File:SQLite370.svg =200px)
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/SQLite370.svg/500px-SQLite370.svg.png" width="200">
 
-MySQL
+<img src="https://upload.wikimedia.org/wikipedia/en/thumb/6/62/MySQL.svg/640px-MySQL.svg.png" width="200">
 
-Oracle
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Oracle_logo.svg/2000px-Oracle_logo.svg.png" width="200">
 
-Microsoft SQL Server
+<img src="http://vignette3.wikia.nocookie.net/logopedia/images/c/cd/MicrosoftSQLServer.png/revision/latest?cb=20150614233628" width="200">
 
 --- 
 
@@ -66,8 +72,15 @@ Distributed (Hbase, Impala)
 
 ---
 
+# SQL/Relational Databases: when and why
+
+---?image=https://imgs.xkcd.com/comics/algorithms.png
+
+---?image=https://s-media-cache-ak0.pinimg.com/736x/8d/91/18/8d9118b4ffae7881453f34a645b66264--web-images-mauve.jpg
 
 
-# Database Schema
 
-http://www.postgresqltutorial.com/postgresql-sample-database
+---
+
+
+
