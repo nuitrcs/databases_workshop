@@ -1,3 +1,10 @@
+@import url('https://fonts.googleapis.com/css?family=Cutive');
+
+.reveal img {
+	border: none;
+	box-shadow: none;
+}
+
 .reveal h1 {
 	font-size: 2em;
 	color: #401F68;
@@ -11,8 +18,21 @@
 	color: #836EAA;
 }
 
+.reveal .special {
+	color: #ffffff;
+	font-family: 'Cutive', serif;
+	font-size: 2em;
+}
+
  body {
 	color: #342F2E;
 	background-color: #ffffff;
 }
 
+.reveal .slides {
+    text-align: left;
+}
+.reveal .slides section>* {
+    margin-left: 0;
+    margin-right: 0;
+}
