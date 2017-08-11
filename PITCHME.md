@@ -15,7 +15,7 @@
 
 ---?image=presentation_assets/serverroom.jpeg
 <section style="text-align: center;">
-## <span style="color: #ffffff;">Sometimes this</span>
+<h2> <span style="color: #ffffff;">Sometimes this</span></h2>
 </section>
 ---
 
@@ -160,6 +160,8 @@ Data that would be in a table is used as a complete unit
 &nbsp;&nbsp;&nbsp;&nbsp;Holds the data
 
 &nbsp;&nbsp;&nbsp;&nbsp;Manages access and permissions
+
+&nbsp;&nbsp;&nbsp;&nbsp;Can hold multiple databases
 
 &nbsp;&nbsp;&nbsp;&nbsp;Runs locally or on a remote system
 

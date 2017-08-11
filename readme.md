@@ -4,6 +4,8 @@ This workshop uses PostgreSQL.  Much of the material applies generically to SQL 
 
 This workshop uses the database discussed in, and follows much of the content of, the [PostgreSQL Tutorial](http://www.postgresqltutorial.com/).
 
+The workshop starts with the presentation below, then [SQL Part 1](sql/part1.md).
+
 ## Presentation Materials
 
 [![GitPitch](https://gitpitch.com/assets/badge.svg)](https://gitpitch.com/nuitrcs/databases_workshop/)
@@ -30,11 +32,15 @@ This repository also includes materials for connecting to a database using Pytho
 
 [Basic Explanation of Relational Databases](http://www.bbc.co.uk/education/guides/ztsvb9q/revision/1): from the BBC, a quick explanation of relational databases
 
-### Additional Exercises
+### Additional Exercises/Tutorials
 
 [PostgreSQL Exercises](https://pgexercises.com/): interactive, online exercises to practice SQL skills in a PostgreSQL environment.  
 
 [SQL Tutorial](https://sqlzoo.net/): from SQL Zoo.  Not specific to PostgreSQL.  Also has interactive exercises. 
+
+[Try SQL](https://www.codeschool.com/courses/try-sql): from Code School; the basic course is free.  Interactive, online tutorial.
+
+[Intermediate SQL Tutorial](https://www.dataquest.io/blog/sql-intermediate/): intermediate level SQL tutorial from Dataquest; uses PostgreSQL and Python (pandas, psycopg2) and includes exercises.  For when you're ready for more practice beyond the basics.
 
 ### Other Options
 
