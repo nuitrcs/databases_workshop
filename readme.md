@@ -32,7 +32,13 @@ This repository also includes materials for connecting to a database using Pytho
 
 [Basic Explanation of Relational Databases](http://www.bbc.co.uk/education/guides/ztsvb9q/revision/1): from the BBC, a quick explanation of relational databases
 
+### Software
+
+[DataGrip Tutorial](https://www.youtube.com/watch?v=Xb9K8IAdZNg): video on how to use the DataGrip program; it even uses the same database we use in this workshop.
+
 ### Additional Exercises/Tutorials
+
+_These resources use PostgreSQL or SQL generally._
 
 [PostgreSQL Exercises](https://pgexercises.com/): interactive, online exercises to practice SQL skills in a PostgreSQL environment.  
 
@@ -42,7 +48,10 @@ This repository also includes materials for connecting to a database using Pytho
 
 [Intermediate SQL Tutorial](https://www.dataquest.io/blog/sql-intermediate/): intermediate level SQL tutorial from Dataquest; uses PostgreSQL and Python (pandas, psycopg2) and includes exercises.  For when you're ready for more practice beyond the basics.
 
-### Other Options
+
+
+### Non-PostgreSQL Resources
 
 The workshop uses the PostgreSQL database system, but if you're working on your own projects, [SQLite](https://www.sqlite.org/) may be a good option.  SQLite doesn't require running a server and it creates a database in a single, portable file locally on your computer.
 
+[Intro to SQL with SQLite](https://github.com/tthibo/SQL-Tutorial)

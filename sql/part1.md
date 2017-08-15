@@ -125,7 +125,9 @@ There are also other `\d` describe functions, among them:
 
 `\df`: list functions
 
-# Select
+You can get a complete list of backslash commands with `\?`.
+
+# `SELECT`
 
 Select is the command we use most often is SQL.  It let's us select data (specified rows and columns) from one or more tables.  Columns are selected by name, rows are selected with conditional statements (values of a particular column meeting some criteria).  
 
@@ -136,7 +138,7 @@ SELECT column_1, column_2
 FROM table1;
 ```
 
-`SELECT` and `FROM` are reserved keywords.  SQL is case-insensitive, but many times you'll see the key terms in all caps.  Note that you use a semicolon `;` to end the statement.  You can also split a SQL statement across multiple lines -- the space between the terms doesn't matter (a new line counts as space).
+`SELECT` and `FROM` are reserved keywords.  SQL is case-insensitive, but many times you'll see the key terms in all caps.  Note that you use a semicolon `;` to end the statement.  You can also split a SQL statement across multiple lines -- the space between the terms doesn't matter (a new line counts as space).  
 
 Let's start with the customer table.   The columns in the customer table are:
 
@@ -169,7 +171,7 @@ Triggers:
     last_updated BEFORE UPDATE ON customer FOR EACH ROW EXECUTE PROCEDURE last_updated()
 ```
 
-To select columns (all rows) we can name the columns:
+To select particular columns we can name the columns:
 
 ```sql
 SELECT customer_id, store_id FROM customer;
@@ -193,6 +195,8 @@ Generally with default `psql` settings we will get paged output.  Hit space to g
 
 ```
 
+The data you get back are called a result set.  
+
 A pipe character `|` delimits columns.  
 
 If we want all of the columns, we can use `*` as shorthand:
@@ -214,7 +218,7 @@ SELECT * FROM customer;
            7 |        1 | Maria       | Miller       | maria.miller@sakilacustomer.org          |         11 | t          |           
 ```
 
-## `limit`
+## `LIMIT`
 
 Instead of getting all rows, we can specify a limit of the number of rows to retrieve.
 
@@ -239,7 +243,7 @@ Here, we got all of the output on a single page, and we can see the row count ou
 
 The order of the rows is not random, but it is not guaranteed to be in any particular order by default either.  
 
-## `where`
+## `WHERE`
 
 Instead of getting all rows or a specific number of rows, we can also specify which rows we want by specifying conditions on the values of particular columns (e.g. equals, greater than, less than).
 
@@ -249,7 +253,7 @@ For example, we can select rows from `customer` that have a `store_id=2` with:
 SELECT * FROM customer WHERE store_id=2;
 ```
 
-(_Going forward, output will only be included when there's something about it to discuss._)
+(_Note: Going forward, output will only be included when there's something about it to discuss._)
 
 You can combined conditions together with `AND` and `OR`:
 
@@ -257,10 +261,16 @@ You can combined conditions together with `AND` and `OR`:
 SELECT * FROM customer WHERE store_id=2 AND customer_id=400;
 ```
 
+Note that string (text) values in SQL are surrounded with single quotes:
+
+```sql
+SELECT * FROM staff WHERE first_name='Jon';
+```
+
 `WHERE` operators include:
 
 | Operator | Description |
-|:---:|---|
+|:---:|:---|
 | = | Equal |
 | > | Greater than |
 | < | Less than |
@@ -271,21 +281,302 @@ SELECT * FROM customer WHERE store_id=2 AND customer_id=400;
 | OR | Logical operator OR |
 
 
-## `distinct`
 
-## `order by`
+### `BETWEEN`
 
-## `between`, `in`, `like`
+`BETWEEN` is shorthand for `# <= x <= #`.  The endpoints are inclusive:
 
-## `group by`
+```sql
+SELECT * FROM film WHERE film_id BETWEEN 1 AND 5;
+```
+### `IN`
 
-## `having`
+`IN` lets you specify a lot of values that you would otherwise join together with an `OR` statement:
 
-## Joins
+```sql
+SELECT * FROM film WHERE film_id IN (3,5,7,9);
+```
 
-### `inner join`
+### `LIKE`
 
-### `left join`
+`LIKE` lets you do pattern matching on strings.  The only two pattern characters are `_` for a single character and `%` for any number of characters (including none).  In some implementations of SQL, `LIKE` is case-insensitive.  In PostgreSQL, it is case-sensitive; `ILIKE` is the PostgreSQL case-insensitive version.
 
-### `right join`
+Get names of actors that start with A.
 
+```sql
+SELECT * FROM actor WHERE first_name LIKE 'A%';
+```   
+
+Note that the following will yield no results:
+
+```sql
+SELECT * FROM actor WHERE first_name LIKE 'a%';
+``` 
+
+But the following is ok:
+
+```sql
+SELECT * FROM actor WHERE first_name ILIKE 'a%';
+``` 
+
+Get 4 letter names starting with A:
+
+```sql
+SELECT * FROM actor WHERE first_name LIKE 'A___';
+```
+
+Get names that end with y:
+
+```sql
+SELECT * FROM actor WHERE first_name LIKE '%y';
+```
+
+Any names with a z in them?
+
+```sql
+SELECT * FROM actor WHERE first_name ILIKE '%z%';
+```
+
+```sql
+dvdrental=# SELECT * FROM actor WHERE first_name ILIKE '%z%';
+ actor_id | first_name | last_name |      last_update       
+----------+------------+-----------+------------------------
+       11 | Zero       | Cage      | 2013-05-26 14:47:57.62
+       89 | Charlize   | Dench     | 2013-05-26 14:47:57.62
+      121 | Liza       | Bergman   | 2013-05-26 14:47:57.62
+(3 rows)
+```
+
+See that we have results where Z is the first letter (since % can match 0 characters) as well as results where there's a z in the middle of the name.
+
+
+### `IS NULL`
+
+Missing data in SQL is `NULL`.  `NULL` values occur where there is no data entered for a specific row and column.  You can test for `NULL` with `IS NULL`:
+
+```sql
+SELECT * FROM address WHERE address2 IS NULL;
+```
+
+`NULL` is different than an empty string (''):
+
+```sql
+SELECT * FROM address WHERE address2 = '';
+```
+
+There is also the opposite: `IS NOT NULL`.
+
+
+## `ORDER BY`
+
+We can determine the order that our results are show in:
+
+```sql
+SELECT film_id, title FROM film ORDER BY film_id;
+```
+
+By default, sorting is done in ascending (`ASC`) order.  To get the reverse order of sorting, use `DESC` (descending):
+
+```sql
+SELECT film_id, title FROM film ORDER BY film_id DESC;
+```
+
+This is often useful to combine with `LIMIT`:
+
+ ```sql
+SELECT film_id, title FROM film ORDER BY film_id DESC LIMIT 5;
+```
+
+You can order by multiple columns:
+
+```sql
+SELECT customer_id, rental_id FROM rental 
+ORDER BY customer_id, rental_id;
+```
+
+
+## `DISTINCT`
+
+`DISTINCT` removes duplicate rows from the result.  It comes before the list of column names, and applies to the combination of all columns.
+
+```sql
+SELECT DISTINCT customer_id, staff_id FROM payment;
+```
+
+```sql
+SELECT DISTINCT amount FROM payment ORDER BY amount;
+```
+
+
+
+## Functions and Arithmetic
+
+There are many common, built-in functions in PostgreSQL.  See PostgreSQL Documentation for a [full list](https://www.postgresql.org/docs/current/static/functions.html) or [list of mathematical functions](https://www.postgresql.org/docs/current/static/functions-math.html).
+
+For example, we can get the minimum or maximum of a column from results:
+
+```sql
+SELECT min(amount) FROM payment;
+SELECT max(amount) FROM payment;
+```
+
+These functions apply to the result set, not the full table: 
+
+```sql
+SELECT max(amount) FROM payment WHERE amount < 4;
+```
+
+You can also do arithmetic:
+
+```sql
+SELECT rental_duration, rental_duration + 1 
+FROM film LIMIT 10;
+```
+
+Functions need to be used the part of the query where you specify the values (or other values) that you are selecting, not the where clause.  The following doesn't work:
+
+```sql
+SELECT customer_id FROM payment WHERE amount = max(amount);
+```
+
+```
+dvdrental=# SELECT customer_id FROM payment WHERE amount = max(amount);
+ERROR:  aggregate functions are not allowed in WHERE
+LINE 1: SELECT customer_id FROM payment WHERE amount = max(amount);
+                                                       ^
+```
+
+To achieve this, you need to use a subquery, which we'll learn about in the next part.  
+
+NOTE: the set of provided functions is not standard across different implementations of SQL, although there are some common core functions.
+
+
+
+
+## `GROUP BY`
+
+`GROUP BY` is used to divide results into groups, where you then apply some summary function to each group.  You will generally select the column you're grouping by, and then a summary function.  The most common operation is counting.  We use `count(*)` to count the number of rows in each group.
+
+```sql
+SELECT customer_id, count(*) FROM rental GROUP BY customer_ID;
+```
+
+We can use other functions as well.
+
+```sql
+SELECT customer_id, avg(amount) FROM payment GROUP BY customer_ID;
+```
+
+You can group by multiple columns:
+
+```sql
+SELECT customer_id, amount, count(*) FROM payment 
+GROUP BY customer_id, amount;
+```
+
+Sort the above
+
+```sql
+SELECT customer_id, amount, count(*) FROM payment 
+GROUP BY customer_id, amount
+ORDER BY customer_id, count(*) DESC;
+```
+
+
+All columns in the `SELECT` part of the statement have to be in the `GROUP BY` part, or you'll get an error:
+
+```sql
+SELECT customer_id, amount, count(*) FROM payment GROUP BY customer_id;
+```
+
+```sql
+dvdrental=# SELECT customer_id, amount, count(*) FROM payment GROUP BY customer_id;
+ERROR:  column "payment.amount" must appear in the GROUP BY clause or be used in an aggregate function
+LINE 1: SELECT customer_id, amount, count(*) FROM payment GROUP BY c...
+```
+
+## `HAVING`
+
+`HAVING` is similar to a `WHERE` clause but it applies to the result of a `GROUP BY` operation; `WHERE` applies before data are grouped by `GROUP BY`;
+
+We can get total amount spent by each customer with:
+
+```sql
+SELECT customer_id, sum(amount) FROM payment
+GROUP BY customer_id;
+```
+
+But how do we just get the customers that spent more than $200?
+
+```sql
+SELECT customer_id, sum(amount) FROM payment
+GROUP BY customer_id
+HAVING sum(amount) > 200;
+```
+
+
+## Dates
+
+So far, we've selected numeric values and string values.  There are also other types, with one of the most common of those being dates.  Dates are in the format `YYYY-MM-DD`.  
+
+```sql
+SELECT count(*) FROM customer WHERE create_date = '2006-02-14';
+```
+
+Timestamps are dates with a time (and possibly timezone) also attached.  
+
+
+```sql
+SELECT rental_date FROM rental WHERE rental_date < '2005-05-25';
+```
+
+```sql
+dvdrental=# select rental_date from rental where rental_date<'2005-05-25';
+     rental_date     
+---------------------
+ 2005-05-24 22:53:30
+ 2005-05-24 22:54:33
+ 2005-05-24 23:03:39
+ 2005-05-24 23:04:41
+ 2005-05-24 23:05:21
+ 2005-05-24 23:08:07
+ 2005-05-24 23:11:53
+ 2005-05-24 23:31:46
+(8 rows)
+```
+
+This will get you everything before 2005-05-25 00:00:00.  If you want just the date part of a datetime:
+
+```sql
+SELECT rental_date FROM rental 
+WHERE date_trunc('day', rental_date) = '2005-05-24';
+```
+
+or
+
+```sql
+SELECT rental_date FROM rental
+WHERE cast(rental_date as date) = '2005-05-24';
+```
+
+or 
+
+```sql
+SELECT rental_date FROM rental 
+WHERE rental_date::date = '2005-05-24';
+```
+
+# Comments
+
+Comments in SQL files:
+
+```sql
+/* this is a comment; it can 
+span multiple lines */
+
+SELECT * FROM actor; /* this is also a comment */
+
+-- this is a single line comment
+
+SELECT * from actor; -- another single line comment
+```
