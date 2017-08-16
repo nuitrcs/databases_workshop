@@ -50,8 +50,10 @@ _These resources use PostgreSQL or SQL generally._
 
 
 
-### Non-PostgreSQL Resources
+### SQLite
 
 The workshop uses the PostgreSQL database system, but if you're working on your own projects, [SQLite](https://www.sqlite.org/) may be a good option.  SQLite doesn't require running a server and it creates a database in a single, portable file locally on your computer.
 
 [Intro to SQL with SQLite](https://github.com/tthibo/SQL-Tutorial)
+
+[Software Carpentry Databases and SQL](http://swcarpentry.github.io/sql-novice-survey/): introductory workshop using SQLite

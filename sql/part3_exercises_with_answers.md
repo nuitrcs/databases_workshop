@@ -5,7 +5,7 @@ There may be other ways to achieve the same result.  Remember that SQL commands 
 
 ## Exercise: Create and Populate Basketball Tables
 
-Using the example in [Part 3](part3.md), create the tables and then populate them with the data.  Either write insert statements or create csv files and read them in.
+Using the example in [Part 3](part3.md#an-example), create the tables and then populate them with the data.  Either write insert statements or create csv files and import them.
 
 Hint: If you make a mistake and want to clear everything in your database, do:
 
@@ -19,8 +19,8 @@ create schema public;
 ```sql
 CREATE TABLE player (
 	id serial PRIMARY KEY,
-	fname text NOT NULL,
-	lname text NOT NULL,
+	first_name text NOT NULL,
+	last_name text NOT NULL,
 	height smallint CHECK (height > 0), 
 	weight smallint
 );
@@ -45,21 +45,23 @@ Add in the data using insert statements.
 
 ```sql
 INSERT INTO player -- don't need to specify columns if using all in order
-VALUES (1 , ' LeBron ', ' James ',  81 ,  249),
-(2 , ' Tim ', ' Duncan ',  82 ,  256 ),
-(3 , ' Chris ', ' Paul ',  72 ,  175),
-(4 , ' Greg ', ' Monroe ',  83 ,  250);
+VALUES (default , ' LeBron ', ' James ',  81 ,  249), -- default indicates to assign the value
+(default , ' Tim ', ' Duncan ',  82 ,  256 ),
+(default , ' Chris ', ' Paul ',  72 ,  175),
+(default , ' Greg ', ' Monroe ',  83 ,  250);
 
-INSERT INTO team
-VALUES (1 , ' Cavaliers ', ' Cleveland'),
-(2 , ' Heat ', ' Miami'),
-(3 , ' Spurs ', ' San Antonio'),
-(4 , ' Hornets ', ' New Orleans'),
-(5 , ' Clippers ', ' Los Angeles'),
-(6 , ' Rockets ', ' Houston'),
-(7 , ' Pistons ', ' Detroit'),
-(8 , ' Bucks ', ' Milwaukee');
+-- with the approach below, default is implied for the ID column
+INSERT INTO team (name, city)
+VALUES (' Cavaliers ', ' Cleveland'),
+(' Heat ', ' Miami'),
+(' Spurs ', ' San Antonio'),
+(' Hornets ', ' New Orleans'),
+(' Clippers ', ' Los Angeles'),
+(' Rockets ', ' Houston'),
+(' Pistons ', ' Detroit'),
+(' Bucks ', ' Milwaukee');
 
+-- check the ID values below before inserting
 INSERT INTO player_team 
 VALUES (1 ,  1 ,  2003 ,  2010),
 (1 ,  2 ,  2010 ,  2014),
@@ -75,19 +77,21 @@ VALUES (1 ,  1 ,  2003 ,  2010),
 
 ## Exercise: Design a Database
 
-Get the data from 
+Get the data from https://raw.githubusercontent.com/nuitrcs/databases_workshop/master/datafiles/allstudents.csv
 
 Decide how to divide this data up into tables, create the tables, and import the data.
 
 Some instructors are listed as TBD: decide how to handle this data.
 
-The active column is 1 for true and 0 for false.  Figure out how to import this as a boolean.
+The active column is 1 for true and 0 for false.  
+
+Note: For importing the data, you can use `\copy` with `psql`, but if you're running `psql` on a remote server (as we do in in-person workshops), the files would need to be on that server (you can use `scp` if you know how).  Another option for importing data is to use DataGrip.  Right click on the table name, and choose Import Data from File.  There is a dialogue box then that you can use to map data from your file to a table.  
 
 #### Solution
 
-You might define the tables differently or choose different data types; this is one option.  
+You might define the tables differently or choose different data types; this is one option.  The solution uses `smallint` for the ids instead of `serial` because the ID numbers are already given in the data.
 
-These are just the create table options.  You'll need to divide the data file up and import it on your own (use copy or `\copy`).
+These are just the create table options.  You'll need to divide the data file up and import it on your own (using `\copy` or DataGrip).  
 
 ```sql
 create table instructor (
