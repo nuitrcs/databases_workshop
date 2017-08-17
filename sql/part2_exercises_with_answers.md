@@ -111,7 +111,7 @@ ORDER BY count(actor_id) DESC
 LIMIT 1;
 ```
 
-``sql
+```sql
 SELECT first_name, last_name, count(film_id) 
 FROM actor, film_actor
 WHERE actor.actor_id=film_actor.actor_id

@@ -6,7 +6,7 @@ Click the + button to add a database.  The + button is a pull-down menu; choose 
 
 By default, you'll have a Data Source with a name like postgres@localhost or something similar.  Information to fill in:
 
-* Name: your choice, something you'll recognize and remember, like workshop dvd
+* Name: your choice, or will be filled in with database name@servername
 * Host: name of the server (will be supplied to you)
 * Database: dvdrental
 * User: your username

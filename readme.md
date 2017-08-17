@@ -57,3 +57,10 @@ The workshop uses the PostgreSQL database system, but if you're working on your 
 [Intro to SQL with SQLite](https://github.com/tthibo/SQL-Tutorial)
 
 [Software Carpentry Databases and SQL](http://swcarpentry.github.io/sql-novice-survey/): introductory workshop using SQLite
+
+[Databases with Python and Pandas](https://www.dataquest.io/blog/python-pandas-databases/): from Data Quest.  Examples of using a SQLite database with Python and pandas too.
+
+
+### Other
+
+[Programming for Biologists](http://www.programmingforbiologists.org/exercises/): includes a section on databases; it uses MS Access instead of PostgreSQL or SQLite, but many of the concepts should be the same.

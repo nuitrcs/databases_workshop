@@ -19,8 +19,6 @@ We're working with the `dvdrental` database from this [PostgreSQL Tutorial](http
 
 The schema (the set of tables, their columns and types, and the relationships between them) is diagramed here: http://www.postgresqltutorial.com/postgresql-sample-database.  
 
-![schema](http://www.postgresqltutorial.com/wp-content/uploads/2013/05/PostgreSQL-Sample-Database.png)
-
 We can also get information directly from the database itself.  These commands are specific to each database system.  The commands below are for PostgreSQL.  
 
 First, use `\d` to get a list of relations (tables, views, sequences) -- we'll talk about what views and sequences are later.  
@@ -129,7 +127,7 @@ You can get a complete list of backslash commands with `\?`.
 
 # `SELECT`
 
-Select is the command we use most often is SQL.  It let's us select data (specified rows and columns) from one or more tables.  Columns are selected by name, rows are selected with conditional statements (values of a particular column meeting some criteria).  
+Select is the command we use most often in SQL.  It let's us select data (specified rows and columns) from one or more tables.  Columns are selected by name, rows are selected with conditional statements (values of a particular column meeting some criteria).  
 
 The basic format of a `SELECT` command is 
 
@@ -383,7 +381,7 @@ SELECT film_id, title FROM film ORDER BY film_id DESC;
 
 This is often useful to combine with `LIMIT`:
 
- ```sql
+```sql
 SELECT film_id, title FROM film ORDER BY film_id DESC LIMIT 5;
 ```
 
