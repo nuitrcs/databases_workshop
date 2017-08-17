@@ -19,7 +19,7 @@ Get a list of actors with the first name Julia.
 
 Get a list of actors with the first name Chris, Cameron, or Cuba.  
 
-Select the row from actors for actor Jamie Rice.
+Select the row from customer for customer named Jamie Rice.
 
 Select amount and payment_date from payment where the amount paid was less than $1.  
 
