@@ -181,6 +181,8 @@ player_id | team_id | starting_year | ending_year
 4 | 8 | 2015 | NULL
 
 
+(We've simplified above to use the year and not the full date; we'd want a full date in reality because players can leave and rejoin a team during a season.)
+
 ## Table Creation
 
 First, player table.  Start with the data types.
@@ -263,7 +265,7 @@ CREATE TABLE player_team (
 
 We also set the start year to not be null, but for the end year, it defaults to null (this is the default default, but we're being explicit).
 
-Our player-team table is still missing a primary key.  We can't use player id and team id because players have left teams and later come back to them.  So we could use 3 columns: player id, team id, and start year:
+Our player-team table is still missing a primary key.  We can't use player id and team id because players have left teams and later come back to them.  So we could use 3 columns: player id, team id, and start year (again, ignoring the possibility that a player leaves a team and rejoins in the same year):
 
 ```sql
 CREATE TABLE player_team (

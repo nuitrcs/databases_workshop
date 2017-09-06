@@ -142,12 +142,12 @@ Enforce constraints about data values, structure, and relationships
 
 ---
 
-## Look elsewhere when
+## Maybe look elsewhere when
 <hr>
 
 Entire dataset is generated together
 
-Data is static
+Data is static and manageable size
 
 Data that would be in a table is used as a complete unit
 

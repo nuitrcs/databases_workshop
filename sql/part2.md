@@ -226,7 +226,21 @@ A `FULL OUTER JOIN` is like doing a left and right join at the same time: you ge
 There aren't any tables with this type of relationship to each other in the dvdrental database, so we aren't going to do an example here.  The syntax is the same as the other joins.  
 
 
+# Views 
 
+A view is a virtual table that has the results of a query in it.  You give it a name like you would a table, and you can use it like a table.  It's useful when you have common views of the data that you need to access often.  It's a way to save common queries, particularly ones that are long or complicated.
+
+We can list views with 
+
+```sql
+\dv
+```
+
+And then select from them like a table
+
+```sql
+select * from actor_info limit 5;
+```
 
 
 

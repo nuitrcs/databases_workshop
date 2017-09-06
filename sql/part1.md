@@ -456,13 +456,13 @@ NOTE: the set of provided functions is not standard across different implementat
 `GROUP BY` is used to divide results into groups, where you then apply some summary function to each group.  You will generally select the column you're grouping by, and then a summary function.  The most common operation is counting.  We use `count(*)` to count the number of rows in each group.
 
 ```sql
-SELECT customer_id, count(*) FROM rental GROUP BY customer_ID;
+SELECT customer_id, count(*) FROM rental GROUP BY customer_id;
 ```
 
 We can use other functions as well.
 
 ```sql
-SELECT customer_id, avg(amount) FROM payment GROUP BY customer_ID;
+SELECT customer_id, avg(amount) FROM payment GROUP BY customer_id;
 ```
 
 You can group by multiple columns:

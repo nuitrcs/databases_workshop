@@ -7,7 +7,7 @@ There may be other ways to achieve the same result.  Remember that SQL commands 
 
 Using the example in [Part 3](part3.md#an-example), create the tables and then populate them with the data.  Either write insert statements or create csv files and import them.
 
-Hint: If you make a mistake and want to clear everything in your database, do:
+Hint: If you make a mistake, you might want to delete tables and start over.  If you need help deleting a table, please ask a workshop assistant or look at the material in the next part of the workshop to see the delete and drop commands.
 
 ```
 drop schema public cascade;
