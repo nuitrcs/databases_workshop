@@ -1,0 +1,274 @@
+---
+title: 'R: Working with Databases'
+author: "Christina Maimone"
+date: '`r Sys.Date()`'
+output:
+  html_notebook:
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Overall Note
+
+R is much better suited to selecting data from databases than for creating database tables or entering data into a database.  
+
+# Connection
+
+The `DBI` package has the core functionality of connecting R to database servers.  There are then packages that implement the core functionality of `DBI` for each specific implementation of SQL.  The package for PostgreSQL is `RPostgreSQL`.
+
+```{r, eval=FALSE}
+install.packages("RPostgreSQL")
+```
+
+```{r}
+library(RPostgreSQL)
+```
+
+We connect with a function call like the following.
+
+```{r, eval=FALSE}
+con <- dbConnect(dbDriver("PostgreSQL"), host="", dbname="dvdrental", 
+                 username="", password="") 
+```
+
+If you omit the username and password, it will look for a [`.pgpass`](https://www.postgresql.org/docs/current/static/libpq-pgpass.html) file.  
+
+Note: this code was generated on my local machine connected to a local copy of the database.
+
+```{r}
+con <- dbConnect(dbDriver("PostgreSQL"), host="localhost", dbname="dvdrental")
+```
+
+We will need a connection like this for any of the methods of connecting below.
+
+# Using DBI
+
+We can use the basic functions in the DBI library:
+
+## Get Database Information
+
+```{r}
+dbListTables(con)
+dbListFields(con, "actor")
+```
+
+
+## Execute Queries
+
+```{r}
+actor_subset <- dbGetQuery(con, "select * from actor where actor_id > 50")
+head(actor_subset)
+```
+
+If we want an entire table, there's a function for that:
+
+```{r}
+actor <- dbReadTable(con, "actor")
+head(actor)
+```
+
+
+## Modifying a Database
+
+We can't modify the `dvdrental` database, but if you connect to a database you can modify, the basic function is `dbSendQuery` for any command you want to execute where you aren't retrieving results.
+
+```{r, eval=FALSE}
+dbSendQuery("update actor set actor_id=5000 where actor_id=5")
+```
+
+Note that the `DBI` package does not support parameterized queries, and thus there are no good protections against SQL injection.  If you want parameterized queries, you'll have to look at other packages not covered in this document.
+
+To create a table, you can give it a data frame
+
+```{r, eval=FALSE}
+mytbl <-data.frame(number=1:10 , letter=LETTERS[1:10])
+dbWriteTable(con, "mynewtable", mytbl)
+```
+
+or you could specify the table with SQL, and execute with `dbSendQuery` but this can get cumbersome.
+
+To remove a table
+
+```{r}
+dbRemoveTable(con, "mynewtable")
+```
+
+
+## Close Connection
+
+Connections will get closed when you quit R, but it's good practice to explicitly close them.
+
+```{r}
+dbDisconnect(con)
+```
+
+## Transactions
+
+There are also methods for managing transactions if you need: `dbBegin`, `dbRollback`, `dbCommit`.
+
+
+# Use `dplyr`
+
+For more complete info, see the [RStudio databases site](http://db.rstudio.com/dplyr/).
+
+```{r, eval=FALSE}
+install.packages("dbplyr")
+```
+
+
+```{r}
+library(tidyverse)
+library(dbplyr)
+```
+
+First, connect like normal
+
+```{r}
+con <- dbConnect(dbDriver("PostgreSQL"), host="localhost", dbname="dvdrental")
+```
+
+Get a reference to a table:
+
+```{r}
+actortbl <- tbl(con, "actor")
+```
+
+If we look at this object, it doesn't have data in it:
+
+```{r}
+str(actortbl)
+```
+
+It just has connection information.  `dbplyr` will try to perform operations within the database where it can, instead of pulling all of the data into R.
+
+Yet you can print the object and see observations:
+
+```{r}
+actortbl
+```
+
+It retrieves them as needed, and also gives you a nice display in notebooks -- output looks a litle different in the console.
+
+You can use `dplyr` verbs to work with the table objects from the database, as if they were data frames (or tibbles).
+
+```{r}
+actortbl %>% 
+  select(actor_id, first_name, last_name) %>% 
+  filter(actor_id > 150)
+```
+
+The above generates and executes the SQL needed to get the result.  It turns `filter` into a select statement with the appropriate where clause.
+
+```{r}
+rentaltbl <- tbl(con, "rental")
+rentaltbl %>% 
+  group_by(customer_id) %>% 
+  summarize(count=n())
+```
+
+What does the above correspond to as a SQL query?  `select customer_id, count(*) from rental group by customer_id;`
+
+```{r}
+rentaltbl %>% 
+  group_by(customer_id) %>% 
+  summarize(count=n()) %>% 
+  show_query()
+```
+
+You can use `collect` to pull down all of the data (tell `dbplyr` to stop being lazy).
+
+You can also use `dplyr`'s commands to join:
+
+```{r}
+custtbl <- tbl(con, "customer")
+addrtbl <- tbl(con, "address")
+custtbl %>% 
+  inner_join(addrtbl, by="address_id") %>%
+  filter(postal_code == '52137') %>%
+  select(first_name, last_name, postal_code)
+```
+
+
+You could create a table with `copy_to` (if you have write permissions)
+
+```{r, eval=FALSE}
+mytbl <-data.frame(number=1:10 , letter=LETTERS[1:10])
+copy_to(con, mytbl, "mynewtable")
+```
+
+By default, it creates a temporary table.  But this is a setting you can change, and you can also specify what columns to index on the table.  
+
+
+Disconnect like we normally do
+
+```{r}
+dbDisconnect(con)
+```
+
+
+
+# RMarkdown
+
+RMarkdown notebooks let you execute SQL queries directly.  You first set up a `DBI` connection like above, and then, instead of having R chunks of code, you can have SQL chunks of code:
+
+````r
+`r ''````{r}
+library(RPostgreSQL)
+con <- dbConnect(dbDriver("PostgreSQL"), host="localhost", dbname="dvdrental")
+```
+````
+
+
+````sql
+`r ''````{sql, connection=con}
+select * from actor where actor_id > 75;
+```
+````
+
+````r
+`r ''````{r}
+dbDisconnect(con)
+```
+````
+
+
+Here is the above, actually executed in RMarkdown:
+
+```{r}
+library(RPostgreSQL)
+con <- dbConnect(dbDriver("PostgreSQL"), host="localhost", dbname="dvdrental")
+```
+
+```{sql, connection=con}
+select * from actor where actor_id > 75;
+```
+
+```{r}
+dbDisconnect(con)
+```
+
+
+For more details, see [knitr Language Engines: SQL](http://rmarkdown.rstudio.com/authoring_knitr_engines.html#sql).
+
+# PL/R
+
+Database administrators can install functionality in a PostgreSQL database to allow you to write R functions directly in the database, and then call them with normal SQL queries.  This is done with [PL/R](https://github.com/postgres-plr/plr).  Enabling this functionality on systems can be risky, because R potentially gives users access to files on the database server.  Database admins are usually conservative in allowing PL/R on the system, but it can be very useful in production systems.  You can use to to generate reports, compute statistical methods, and even create plots.
+
+We aren't covering PL/R (or even writing SQL functions more generally), but it's good to know this functionality exists if you're ever working with a large production system.
+
+
+# RStudio
+
+Coming soon to RStudio is a databases [connection pane](http://db.rstudio.com/connections) that helps you manage database connections and write the R code needed to connect.  It will provide an interface more like DataGrip.
+
+
+
+
+
+

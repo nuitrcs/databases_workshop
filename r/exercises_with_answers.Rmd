@@ -1,0 +1,237 @@
+---
+title: "R Database Exercises"
+author: "Christina Maimone"
+date: "`r Sys.Date()`"
+output: html_document
+params:
+    answers: TRUE
+---
+
+<!--
+rmarkdown::render('exercises_with_answers.Rmd',
+                    output_file = 'exercises.html',
+                    params = list(answers=FALSE))
+-->
+
+```{r, echo=FALSE, eval=TRUE}
+answers<-params$answers
+```
+
+```{r global_options, echo = FALSE, include = FALSE}
+knitr::opts_chunk$set(echo=answers, eval=answers,
+                      warning = FALSE, message = FALSE,
+                      cache = FALSE, tidy = FALSE)
+```
+
+
+## Exercise: Selecting Random Data
+
+One thing that isn't easy to do with SQL is selecting random rows.  There are functions to generate random values, but generating a new random column on a large table, and then sorting by that column (or computing the max value and then selecting an observation) is costly.  This is one scenario when working with a database from R (or another program) is useful.
+
+Use the code below to create a table in the database.  Then figure out how to select 3 random rows from that table (as if you didn't have access to the code or values that created the table).  Do this without reading the entire table into R.  Hint: you'll probably want to use some combination of sorting the table, limiting the number of rows you retrieve, and offsetting results (which we probably didn't cover: learn more [here](http://www.postgresqltutorial.com/postgresql-limit/) or [here](https://www.tutorialspoint.com/postgresql/postgresql_limit_clause.htm)).
+
+Remember to set the connection information as appropriate.
+
+```{r, echo=TRUE, eval=TRUE, message=FALSE, results='hide'}
+library(RPostgreSQL)
+con <- dbConnect(dbDriver("PostgreSQL"), host="localhost", dbname="workshop") 
+
+make_random_name <- function() {
+  paste(sample(LETTERS, 5), collapse="")
+}
+
+measure <- data.frame(id=sample(1:1000, 100), 
+                      name=replicate(100, make_random_name()))
+
+dbWriteTable(con, "measure", measure,
+             row.names = FALSE,
+             overwrite=TRUE) # in case code is run multiple times
+```
+
+```{asis}
+#### Solution
+
+First, figure out how many rows are in the table.
+```
+
+```{r}
+rowcount <- dbGetQuery(con, "select count(*) from measure;")[1,1]
+```
+
+```{asis}
+Then select 3 random values between 1 and the number of rows. Then for each, execute a query to get that row from the database.
+```
+
+```{r}
+rownums <- sample(1:rowcount, 3) - 1
+selectedrows <- NULL
+for (offset in rownums) {
+  selectedrows <- 
+    rbind(selectedrows,
+          dbGetQuery(con,
+                      paste("select * from measure
+                            order by id
+                            limit 1
+                            offset", offset, ";")))
+}
+selectedrows
+```
+
+```{asis}
+An alternative approach, which could work well if the table isn't too big, is to retrieve all of the IDs, and then randomly sample the IDs, and retrieve just those rows.
+```
+
+```{r, echo=TRUE, eval=TRUE, message=FALSE, results='hide'}
+dbDisconnect(con)
+```
+
+
+## Exercise: `dbplyr`
+
+Connect to the dvdrental database.  Repeat [Exercise: Joining and Grouping 2](https://github.com/nuitrcs/databases_workshop/blob/master/sql/part2_exercises_with_answers.md) from Part 2 using `dbplyr`. 
+
+```{r, echo=TRUE, eval=TRUE}
+library(dbplyr)
+library(dplyr)
+```
+
+```{asis}
+#### Solution
+
+Set your connection information as appropriate for the workshop:
+```
+
+```{r}
+con <- dbConnect(dbDriver("PostgreSQL"), 
+                 host="localhost", dbname="dvdrental") 
+custtbl <- tbl(con, "customer")
+paytbl <- tbl(con, "payment")
+custtbl %>% 
+  inner_join(paytbl, by="customer_id") %>%
+  group_by(first_name, last_name) %>%
+  summarize(totalamt = sum(amount)) %>%
+  filter(totalamt > 150) %>%
+  arrange(desc(totalamt))
+dbDisconnect(con)
+```
+
+
+
+## Exercise: Create and Populate Tables
+
+Connect to a database where you have permission to create tables. (If you're doing this on your own, you could use SQLite instead of PostgreSQL and write a local database.)
+
+Create three tables with appropriate columns:
+
+* `person`: at least an ID and name, maybe other characteristics of a person
+* `relationship`: links people together and labels it with a relationship type
+* `relationship_type`: a table defining the allowed set of relationship types in the `relationship` table
+
+Populate the tables with information about your friends and/or family.  Hint: think about how you want to handle IDs for people so that you can use them in the relationship table.  Hint 2: think about how to make it clear in the relationship table what the direction of the relationship is (e.g. who is the child and who is the parent?).  Hint 3: you can use `dbWriteTable` to add data to an existing table -- set the `append` argument.
+
+Once you have the tables created, select data from the database and print out sentences describing the family relationships.
+
+Note: the process of creating database tables and populating them from R is a bit messy and doesn't have a good natural workflow.  This exercise is to help you get used to doing it, but you generally want to avoid creating databases from R in most circumstances.  Use R to select data from databases, not create databases.
+
+```{asis}
+#### Solution
+
+There are obviously multiple ways to do this.  Here is one.
+
+Set your connection information as appropriate for your own database
+```
+
+```{r}
+library(RPostgreSQL)
+con <- dbConnect(dbDriver("PostgreSQL"), host="localhost", dbname="workshop") 
+```
+
+```{asis}
+Create tables.  We'll set the person id ourselves to keep track of them since we need them later.  For relationship, we don't need the ids, so let the database generate them.
+```
+
+```{r, message=FALSE, results='hide'}
+dbSendQuery(con, "create table person (
+            id int primary key, 
+            name text not null);")
+dbSendQuery(con, "create table relationship_type (
+               type text primary key);")
+dbSendQuery(con, "create table relationship (
+            id serial primary key, 
+            subject int references person(id),
+            predicate int references person(id),
+            relationship text references relationship_type(type));")
+```
+
+
+```{asis}
+Now populate tables.  For person, we're going to define ID numbers ourselves in R.  This works well when ID numbers have some meaning in the real world, but if you just want an auto generated sequence of integers, this isn't great practice.  Instead, you could use a serial type, insert the names into the database, and retrieve the ID numbers back into R to use to define relationships.  This would work ok for moderately sized database, but also isn't great practice.
+```
+
+```{r, message=FALSE, results='hide'}
+person <- data.frame(id=1:6, 
+                     name=c('Christina','Casey','Henry',
+                            'Jessica','Denise','Bob'),
+                     stringsAsFactors = FALSE)
+dbWriteTable(con, "person", person,
+             row.names=FALSE, append=TRUE)
+```
+
+```{asis}
+Define relationship types.    
+```
+
+```{r, message=FALSE, results='hide'}
+relationship_type <- data.frame(type=c('spouse of','parent of','sibling of','child of'))
+dbWriteTable(con, "relationship_type", relationship_type,
+             row.names=FALSE, append=TRUE)
+```
+
+```{asis}
+And finally the relationships.  In the database, we want to define relationships using peoples' ID numbers, not their names, since names may not be unique.  The columns we'll want are ID, person 1 ID (call this person the subject), person 2 ID (call this person the predicate), and relationship type.  
+
+There isn't an easy way to create a substancial data set in R by typing, and since R data frames are created by column, instead of by row, it can get tricky to make sure that the data is lined up correctly.  I'd suggest creating a CSV file with the information and reading it into R to use.  Here, I'm going to use `dbSendQuery` to execute individual statements instead. I'm going to look up ID numbers using names so that the statements are more human readable, but this approach wouldn't work if I had any duplicate names.  Just showing a few examples, since this is tedious.
+
+I'm using double quotes below so that I can use single quotes in SQL queries.
+```
+
+```{r, message=FALSE, results='hide'}
+dbSendQuery(con, paste0("insert into relationship (subject, predicate, relationship) 
+                        values (", person$id[person$name=="Christina"], ",",  
+                                    person$id[person$name=="Casey"], 
+                                    ", 'spouse of');"))
+dbSendQuery(con, paste0("insert into relationship (subject, predicate, relationship) 
+                        values (", person$id[person$name=="Christina"], ",",  
+                                    person$id[person$name=="Henry"], 
+                                    ", 'parent of');"))
+dbSendQuery(con, paste0("insert into relationship (subject, predicate, relationship) 
+                        values (", person$id[person$name=="Casey"], ",",  
+                                    person$id[person$name=="Henry"], 
+                                    ", 'parent of');"))
+dbSendQuery(con, paste0("insert into relationship (subject, predicate, relationship) 
+                        values (", person$id[person$name=="Christina"], ",",  
+                                    person$id[person$name=="Jessica"], 
+                                    ", 'sibling of');"))
+```
+
+```{asis}
+Look at results.
+```
+
+```{r}
+relations <- dbGetQuery(con, "select a.name, b.name, relationship 
+                              from person a, person b, relationship 
+                              where a.id=subject and b.id=predicate;")
+for (row in 1:nrow(relations)) {
+  print(paste(relations[row,1], "is the", relations[row,3], relations[row,2]))
+}
+```
+
+```{asis}
+Disconnect:
+```
+
+```{r, message=FALSE, results='hide'}
+dbDisconnect(con)
+```
+
