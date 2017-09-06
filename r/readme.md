@@ -2,9 +2,17 @@
 
 You will need the `RPostgreSQL` package in R for the materials here, as well as access to a PostgreSQL server.  The examples here use the database from the [PostgreSQL Tutorial](http://www.postgresqltutorial.com/).
 
-NOTE: materials still in progress.  Will be done by Sept. 11.
 
-## Resources
+# Files
+
+R Notebook used in the workshop: [download R Notebook](https://raw.githubusercontent.com/nuitrcs/databases_workshop/master/r/r_databases.Rmd) | [html](https://nuitrcs.github.io/databases_workshop/r/r_databases.nb.html)
+
+Exercises: [html](https://nuitrcs.github.io/databases_workshop/r/exercises.html)
+
+Exercises with answers: [download RMarkdown](https://raw.githubusercontent.com/nuitrcs/databases_workshop/master/r/exercises_with_answers.Rmd) | [html](https://nuitrcs.github.io/databases_workshop/r/exercises_with_answers.html)
+
+
+# Resources
 
 [Overview of Databases in R](https://rstudio-pubs-static.s3.amazonaws.com/52614_1fa12c657ba7492092bd538205d7f02e.html): this uses SQLite, not PostgreSQL, as an example
 
