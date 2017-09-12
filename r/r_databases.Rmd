@@ -7,6 +7,9 @@ output:
     toc: yes
     toc_depth: 3
     toc_float: yes
+  html_document:
+    toc: yes
+    toc_depth: '3'
 ---
 
 
@@ -95,7 +98,7 @@ or you could specify the table with SQL, and execute with `dbSendQuery` but this
 
 To remove a table
 
-```{r}
+```{r, eval=FALSE}
 dbRemoveTable(con, "mynewtable")
 ```
 
@@ -122,20 +125,20 @@ install.packages("dbplyr")
 ```
 
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(dbplyr)
 ```
 
 First, connect like normal
 
-```{r}
+```{r, echo=TRUE}
 con <- dbConnect(dbDriver("PostgreSQL"), host="localhost", dbname="dvdrental")
 ```
 
 Get a reference to a table:
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 actortbl <- tbl(con, "actor")
 ```
 
@@ -149,7 +152,7 @@ It just has connection information.  `dbplyr` will try to perform operations wit
 
 Yet you can print the object and see observations:
 
-```{r}
+```{r, echo=TRUE}
 actortbl
 ```
 
@@ -157,7 +160,7 @@ It retrieves them as needed, and also gives you a nice display in notebooks -- o
 
 You can use `dplyr` verbs to work with the table objects from the database, as if they were data frames (or tibbles).
 
-```{r}
+```{r, echo=TRUE}
 actortbl %>% 
   select(actor_id, first_name, last_name) %>% 
   filter(actor_id > 150)
@@ -165,7 +168,7 @@ actortbl %>%
 
 The above generates and executes the SQL needed to get the result.  It turns `filter` into a select statement with the appropriate where clause.
 
-```{r}
+```{r, echo=TRUE}
 rentaltbl <- tbl(con, "rental")
 rentaltbl %>% 
   group_by(customer_id) %>% 
@@ -174,7 +177,7 @@ rentaltbl %>%
 
 What does the above correspond to as a SQL query?  `select customer_id, count(*) from rental group by customer_id;`
 
-```{r}
+```{r, echo=TRUE}
 rentaltbl %>% 
   group_by(customer_id) %>% 
   summarize(count=n()) %>% 
@@ -185,7 +188,7 @@ You can use `collect` to pull down all of the data (tell `dbplyr` to stop being 
 
 You can also use `dplyr`'s commands to join:
 
-```{r}
+```{r, echo=TRUE}
 custtbl <- tbl(con, "customer")
 addrtbl <- tbl(con, "address")
 custtbl %>% 
@@ -197,7 +200,7 @@ custtbl %>%
 
 You could create a table with `copy_to` (if you have write permissions)
 
-```{r, eval=FALSE}
+```{r, scho=TRUE, eval=FALSE}
 mytbl <-data.frame(number=1:10 , letter=LETTERS[1:10])
 copy_to(con, mytbl, "mynewtable")
 ```
@@ -223,7 +226,6 @@ library(RPostgreSQL)
 con <- dbConnect(dbDriver("PostgreSQL"), host="localhost", dbname="dvdrental")
 ```
 ````
-
 
 ````sql
 `r ''````{sql, connection=con}

@@ -22,3 +22,5 @@ Exercises with answers: [download RMarkdown](https://raw.githubusercontent.com/n
 
 [Working with Databases in RStudio](http://db.rstudio.com/): features of RStudio, and packages created by RStudio, to help you work with databases in R; some of the features discussed are only available in development versions of RStudio at this point.
 
+[Databases Using R](https://rviews.rstudio.com/2017/05/17/databases-using-r/) by Edgar Ruiz is an up-to-date overview
+
