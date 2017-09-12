@@ -3,13 +3,13 @@ title: 'R: Working with Databases'
 author: "Christina Maimone"
 date: '`r Sys.Date()`'
 output:
+  html_document:
+    toc: yes
+    toc_depth: '3'
   html_notebook:
     toc: yes
     toc_depth: 3
     toc_float: yes
-  html_document:
-    toc: yes
-    toc_depth: '3'
 ---
 
 
@@ -156,7 +156,7 @@ Yet you can print the object and see observations:
 actortbl
 ```
 
-It retrieves them as needed, and also gives you a nice display in notebooks -- output looks a litle different in the console.
+It retrieves them as needed, and also gives you a nice display in notebooks (a special kind of RMarkdown file) -- output looks a litle different in the console and in RMarkdown files like this.
 
 You can use `dplyr` verbs to work with the table objects from the database, as if they were data frames (or tibbles).
 

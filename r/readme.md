@@ -7,7 +7,7 @@ You will need the `RPostgreSQL` package in R for the materials here, as well as 
 
 Right-click the download links to save just those files.  Be careful of the file type you save the file as.  Both are .Rmd (choose All Files or Text Files as type in the browser download box).
 
-R Notebook used in the workshop: [download R Notebook](https://raw.githubusercontent.com/nuitrcs/databases_workshop/master/r/r_databases.Rmd) | [html](https://nuitrcs.github.io/databases_workshop/r/r_databases.nb.html)
+R Notebook used in the workshop: [download R Notebook](https://raw.githubusercontent.com/nuitrcs/databases_workshop/master/r/r_databases.Rmd) | [html](https://nuitrcs.github.io/databases_workshop/r/r_databases.html)
 
 Exercises: [html](https://nuitrcs.github.io/databases_workshop/r/exercises.html)
 
