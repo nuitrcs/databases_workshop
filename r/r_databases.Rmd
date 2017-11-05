@@ -26,7 +26,9 @@ R is much better suited to selecting data from databases than for creating datab
 The `DBI` package has the core functionality of connecting R to database servers.  There are then packages that implement the core functionality of `DBI` for each specific implementation of SQL.  The package for PostgreSQL is `RPostgreSQL`.
 
 ```{r, eval=FALSE}
-install.packages("RPostgreSQL")
+if(!'RPostgreSQL' %in% installed.packages()){
+  install.packages("RPostgreSQL")
+}
 ```
 
 ```{r}
@@ -36,11 +38,11 @@ library(RPostgreSQL)
 We connect with a function call like the following.
 
 ```{r, eval=FALSE}
-con <- dbConnect(dbDriver("PostgreSQL"), host="", dbname="dvdrental", 
-                 username="", password="") 
+con <- dbConnect(dbDriver("PostgreSQL"), host=Sys.getenv("PGHOST"), dbname="dvdrental", 
+                 user=Sys.getenv("PGUSER"), password=Sys.getenv("PGPASSWORD")) 
 ```
 
-If you omit the username and password, it will look for a [`.pgpass`](https://www.postgresql.org/docs/current/static/libpq-pgpass.html) file.  
+If you omit the username and password, it will look for a [`.pgpass`](https://www.postgresql.org/docs/current/static/libpq-pgpass.html) file.  Alternatively, you can use an [`.Renviron`](https://stat.ethz.ch/R-manual/R-devel/library/base/html/Startup.html) file that R will load on start-up to make available environment variables to you in your session.
 
 Note: this code was generated on my local machine connected to a local copy of the database.
 
@@ -55,6 +57,7 @@ We will need a connection like this for any of the methods of connecting below.
 We can use the basic functions in the DBI library:
 
 ## Get Database Information
+Note that the following `db-` prefixed functions are exported from the DBI and RPostgreSQL namespaces.
 
 ```{r}
 dbListTables(con)
@@ -79,10 +82,10 @@ head(actor)
 
 ## Modifying a Database
 
-We can't modify the `dvdrental` database, but if you connect to a database you can modify, the basic function is `dbSendQuery` for any command you want to execute where you aren't retrieving results.
+If you're not a superuser on the `dvdrental` database, just try connecting to a database you can modify. Then the basic function is `dbSendQuery` for any command you want to execute where you aren't retrieving results.
 
 ```{r, eval=FALSE}
-dbSendQuery("update actor set actor_id=5000 where actor_id=5")
+dbSendQuery(con, statement="update actor set actor_id=5000 where actor_id=5")
 ```
 
 Note that the `DBI` package does not support parameterized queries, and thus there are no good protections against SQL injection.  If you want parameterized queries, you'll have to look at other packages not covered in this document.
@@ -113,7 +116,65 @@ dbDisconnect(con)
 
 ## Transactions
 
-There are also methods for managing transactions if you need: `dbBegin`, `dbRollback`, `dbCommit`.
+There are also methods for managing transactions if you need: `dbBegin`, `dbRollback`, `dbCommit`. Transactions are key for when you need to be sure that a sequence of SQL commands (e.g. `UPDATE`, `CREATE`, `DROP`, `DELETE`, etc.) execute correctly before they're made permanent (i.e. "committed").
+
+If you are running an automated ETL ("Extract, Transform, Load") job, you might need assurances that your processes will execute safely - for example, suppose you regularly need to `DELETE` certain rows and replace them by `INSERT`ing new rows? What if the `INSERT` statement fails, so that all you've done is deleted data? You wouldn't want this to ever happen to a production data store. Transactions allow you to approach your ETL as an "all or nothing" process, whereby if *any* part of your data manipulation fails, none of the process is executed (all of it is rolled back).
+
+Let's suppose you work for the DVD rental company, and your boss wants you to create a set of movie recommendations for each customer and refresh that data every week. Every week this job consists of
+
+* Creating a fresh set of (`film_id`, `customer_id`) recommendation data. 
+    + For the purposes of this demo, let's assume this already happened, and that the recommendations are in a file called `datafiles/movierecs.csv`. If you're curious as to how to make a basic movie recommender model, check out Frank's [`gist`](https://gist.github.com/ffineis/b9773c4117c83a464312b4bf46421486).
+* Clearing out old recommendations into the `film_customer` relationship table.
+* Inserting new recommendations into the `film_customer` relationship table.
+
+```{r}
+# start by loading in movie recommendation data, which is just movie <> film tuples
+movieRecDF <- read.csv('../datafiles/movierecs.csv')
+head(movieRecDF, n = 3)
+```
+
+People usually perform bulk update/inserts into a table in 3 steps:
+
+1. Move new data into a staging (i.e. temporary) table.
+2. Use `INSERT` or `UPDATE` to dump data from the staging table into your "target" table.
+3. `DROP` the staging table.
+
+It's convenient to use a `tryCatch` to catch any errors during your process and roll back those changes when errors occur.
+
+```{r, eval=FALSE}
+
+# Check if film_customer table exists
+if(!'film_customer' %in% dbListTables(con)){
+  warning('film_customer table not found! Go check out SQL to build this table: http://bit.ly/2j3Sx65')
+}
+
+# Name your staging table. Sys.time part helps keep table unique.
+stagingTableName <- paste0('film_customer_temp_', as.integer(Sys.time()))
+
+# ETL transaction block.
+out <- tryCatch({
+  dbBegin(con) # Alternatively, could use DBI::dbExecute(con, 'BEGIN TRANSACTION;')
+  out <- dbWriteTable(con
+                      , name = stagingTableName
+                      , value = movieRecDF
+                      , overwrite = TRUE)
+  remove <- paste0('DELETE FROM film_customer WHERE customer_id IN (SELECT customer_id FROM '
+                   , stagingTableName
+                   , ')')
+  out <- dbExecute(con, remove)
+  insert <- paste0('INSERT INTO film_customer (film_id, customer_id) SELECT film_id, customer_id FROM '
+                   , stagingTableName)
+  out <- dbExecute(con, insert)
+  drop <- paste0('DROP TABLE '
+                 , stagingTableName)
+  out <- dbExecute(con, drop)
+  dbCommit(con)
+  }, error = function(e) {
+    warning('Something went wrong in film_customer refresh. Rolling back.')
+    dbRollback(con)
+  }
+)
+```
 
 
 # Use `dplyr`
@@ -121,7 +182,11 @@ There are also methods for managing transactions if you need: `dbBegin`, `dbRoll
 For more complete info, see the [RStudio databases site](http://db.rstudio.com/dplyr/).
 
 ```{r, eval=FALSE}
-install.packages("dbplyr")
+needToInstall <- c("dbplyr", "tidyverse")
+needToInstall <- needToInstall[which(!needToInstall %in% installed.packages())]
+if(length(needToInstall) > 0){
+  sapply(needToInstall, install.packages)
+}
 ```
 
 
