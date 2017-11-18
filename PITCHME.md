@@ -172,10 +172,11 @@ Data that would be in a table is used as a complete unit
 ---
 
 ## Relational data conventions
+<hr>
 
-**Primary key** serves as ID to your primary data entities
+**Primary keys** serve as ID to your primary data entities
 
-**Foreign key** serves as ID in one table that identifies a row in another table (e.g. children -> parents)
+**Foreign keys** serve as ID in one table that identifies a row in another table (e.g. children -> parents)
 
 **Relationship tables** express many-to-many type relationships (e.g. Netflix account <-> movie data)
 
