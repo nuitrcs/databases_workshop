@@ -184,8 +184,7 @@ Data that would be in a table is used as a complete unit
 
 ## Entity-relationship diagram example
 
-![dvd db](http://www.postgresqltutorial.com/wp-content/uploads/2013/05/PostgreSQL-Sample-Database.png)
-
-
+<img src="http://www.postgresqltutorial.com/wp-content/uploads/2013/05/PostgreSQL-Sample-Database.png" 
+width="500">
 
 
