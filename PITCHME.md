@@ -97,7 +97,7 @@ Rows of records/observations
 
 Columns of attributes or fields
 
-Tables are linked together (relational model of data) 
+Tables are linked together with *keys* (relational model of data) 
 
 ---
 
@@ -140,6 +140,8 @@ Individual observations (records) are changing or being added
 
 Enforce constraints about data values, structure, and relationships
 
+Automatically maintain attributes of data like "last modified," "created date"
+
 ---
 
 ## Maybe look elsewhere when
@@ -167,6 +169,23 @@ Data that would be in a table is used as a complete unit
 
 **CLIENT** program connects to the server to access the data
 
+---
 
+## Relational data conventions
+<hr>
+
+**Primary keys** serve as ID to your primary data entities
+
+**Foreign keys** serve as ID in one table that identifies a row in another table (e.g. children -> parents)
+
+**Relationship tables** express many-to-many type relationships (e.g. Netflix account <-> movie data)
+
+
+---
+
+## Entity-relationship diagram example
+
+<img src="http://www.postgresqltutorial.com/wp-content/uploads/2013/05/PostgreSQL-Sample-Database.png" 
+width="500">
 
 
