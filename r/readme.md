@@ -24,3 +24,4 @@ Exercises with answers: [download RMarkdown](https://raw.githubusercontent.com/n
 
 [Databases Using R](https://rviews.rstudio.com/2017/05/17/databases-using-r/) by Edgar Ruiz is an up-to-date overview
 
+[SQL Databases and R](http://www.datacarpentry.org/R-ecology-lesson/05-r-and-databases.html) from Data Carpentry (part of a larger introductory R workshop)
