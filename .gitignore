@@ -3,3 +3,9 @@ python/.ipynb_checkpoints/*
 
 *.Rhistory
 *.Rproj
+
+.idea/
+
+handout.*
+
+PostgreSQL-Cheat-Sheet.pdf

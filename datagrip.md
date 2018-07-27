@@ -12,9 +12,13 @@ By default, you'll have a Data Source with a name like postgres@localhost or som
 * User: your username
 * Password: your password (for the database)
 
-Driver should say PostgreSQL.  If there is a link to use the default driver or download a driver, do that.  
+Driver should say PostgreSQL.  If there is a link to use the default driver or download/update a driver, do that (should show at the bottom of the window).  
 
 Click the Test Connection button to make sure the information is working.  
+
+Then click on the Schemas tab.  Find the option that has says (Current database) next to it.  Expand it, and select the public schema.  
+
+Then click on the Options tab.  Check the box next to "Introspect using JDBC metadata."
 
 Click OK in the bottom right.  
 

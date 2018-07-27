@@ -36,6 +36,16 @@ This repository also includes materials for connecting to a database using Pytho
 
 [DataGrip Tutorial](https://www.youtube.com/watch?v=Xb9K8IAdZNg): video on how to use the DataGrip program; it even uses the same database we use in this workshop.
 
+### Reference
+
+[PostgreSQL cheat sheet](http://www.postgresqltutorial.com/wp-content/uploads/2018/03/PostgreSQL-Cheat-Sheet.pdf): a list of basic commands and patterns for statements
+
+[PostgreSQL Documentation](https://www.postgresql.org/docs/current/static/index.html): official documentation 
+
+[dvdrental Diagram](http://www.postgresqltutorial.com/wp-content/uploads/2018/03/printable-postgresql-sample-database-diagram.pdf): entity-relationship diagram for the database used in the workshop
+
+[psql commands cheat sheet](http://www.postgresonline.com/downloads/special_feature/postgresql83_psql_cheatsheet.pdf): describe commands, other slash commands
+
 ### Additional Exercises/Tutorials
 
 _These resources use PostgreSQL or SQL generally._
