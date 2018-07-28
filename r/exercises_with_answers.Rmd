@@ -32,9 +32,12 @@ Use the code below to create a table in the database.  Then figure out how to se
 
 Remember to set the connection information as appropriate.
 
+The new argument `bigint` in the connection function tells the package how to translate data from the database into R.
+
 ```{r, echo=TRUE, eval=TRUE, message=FALSE, results='hide'}
-library(RPostgreSQL)
-con <- dbConnect(dbDriver("PostgreSQL"), host="localhost", dbname="workshop") 
+library(RPostgres)
+con <- dbConnect(RPostgres::Postgres(), host="localhost", dbname="workshop",
+                 bigint="numeric") 
 
 make_random_name <- function() {
   paste(sample(LETTERS, 5), collapse="")
@@ -55,7 +58,7 @@ First, figure out how many rows are in the table.
 ```
 
 ```{r}
-rowcount <- dbGetQuery(con, "select count(*) from measure;")[1,1]
+rowcount <- dbGetQuery(con, "select count(*) from measure")[1,1]
 ```
 
 ```{asis}
@@ -63,7 +66,7 @@ Then select 3 random values between 1 and the number of rows. Then for each, exe
 ```
 
 ```{r}
-rownums <- sample(1:rowcount, 3) - 1
+rownums <- sample.int(rowcount, 3) - 1
 selectedrows <- NULL
 for (offset in rownums) {
   selectedrows <- 
@@ -72,16 +75,18 @@ for (offset in rownums) {
                       paste("select * from measure
                             order by id
                             limit 1
-                            offset", offset, ";")))
+                            offset", offset)))
 }
 selectedrows
 ```
 
 ```{asis}
+We used paste function above because we have control over offset -- it would be better to use a prepared query, but since we aren't getting input from a user, it's not super dangerous.
+
 An alternative approach, which could work well if the table isn't too big, is to retrieve all of the IDs, and then randomly sample the IDs, and retrieve just those rows.
 ```
 
-```{r, echo=TRUE, eval=TRUE, message=FALSE, results='hide'}
+```{r, eval=TRUE, message=FALSE, results='hide'}
 dbDisconnect(con)
 ```
 
@@ -102,7 +107,7 @@ Set your connection information as appropriate for the workshop:
 ```
 
 ```{r}
-con <- dbConnect(dbDriver("PostgreSQL"), 
+con <- dbConnect(RPostgres::Postgres(), 
                  host="localhost", dbname="dvdrental") 
 custtbl <- tbl(con, "customer")
 paytbl <- tbl(con, "payment")
@@ -131,7 +136,7 @@ Populate the tables with information about your friends and/or family.  Hint: th
 
 Once you have the tables created, select data from the database and print out sentences describing the family relationships.
 
-Note: the process of creating database tables and populating them from R is a bit messy and doesn't have a good natural workflow.  This exercise is to help you get used to doing it, but you generally want to avoid creating databases from R in most circumstances.  Use R to select data from databases, not create databases.
+Note: the process of creating database tables and populating them from R is a bit messy and doesn't have a good natural workflow.  This exercise is to help you get used to doing it, but you generally want to avoid creating databases from R in most circumstances.  Use R to select data from databases, not create databases (at least stable, production ones).
 
 ```{asis}
 #### Solution
@@ -142,25 +147,35 @@ Set your connection information as appropriate for your own database
 ```
 
 ```{r}
-library(RPostgreSQL)
-con <- dbConnect(dbDriver("PostgreSQL"), host="localhost", dbname="workshop") 
+con <- dbConnect(RPostgres::Postgres(), host="localhost", dbname="workshop") 
 ```
 
 ```{asis}
 Create tables.  We'll set the person id ourselves to keep track of them since we need them later.  For relationship, we don't need the ids, so let the database generate them.
 ```
 
+```{r, results='hide', echo=FALSE, message=FALSE, warning=FALSE, error=FALSE}
+dbRemoveTable(con, "relationship", fail_if_missing = FALSE)
+dbRemoveTable(con, "person", fail_if_missing = FALSE)
+dbRemoveTable(con, "relationship_type", fail_if_missing = FALSE)
+```
+
+```{asis}
+The code below will generate warnings, but they're ok.
+```
+
+
 ```{r, message=FALSE, results='hide'}
 dbSendQuery(con, "create table person (
             id int primary key, 
-            name text not null);")
+            name text not null)")
 dbSendQuery(con, "create table relationship_type (
-               type text primary key);")
+               type text primary key)")
 dbSendQuery(con, "create table relationship (
             id serial primary key, 
             subject int references person(id),
             predicate int references person(id),
-            relationship text references relationship_type(type));")
+            relationship text references relationship_type(type))")
 ```
 
 

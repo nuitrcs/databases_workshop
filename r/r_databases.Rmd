@@ -6,10 +6,8 @@ output:
   html_document:
     toc: yes
     toc_depth: '3'
-  html_notebook:
-    toc: yes
-    toc_depth: 3
-    toc_float: yes
+editor_options: 
+  chunk_output_type: console
 ---
 
 
@@ -19,38 +17,42 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Overall Note
 
-R is much better suited to selecting data from databases than for creating database tables or entering data into a database.  
+R is generally better suited to selecting data from databases than for creating database tables or entering data into a database.  But there are functions to do all operations.
 
 # Connection
 
-The `DBI` package has the core functionality of connecting R to database servers.  There are then packages that implement the core functionality of `DBI` for each specific implementation of SQL.  The package for PostgreSQL is `RPostgreSQL`.
+The `DBI` package has the core functionality of connecting R to database servers.  There are then packages that implement the core functionality of `DBI` for each specific implementation of SQL.  A package for PostgreSQL is `RPostgres`. (Note: this workshop previously used `RPostgreSQL` but the newer package `RPostgres` is more fully compliant with the `DBI` API.)
 
 ```{r, eval=FALSE}
-if(!'RPostgreSQL' %in% installed.packages()){
-  install.packages("RPostgreSQL")
+if(!'RPostgres' %in% installed.packages()){
+  install.packages("RPostgres")
 }
 ```
 
 ```{r}
-library(RPostgreSQL)
+library(RPostgres)
 ```
 
 We connect with a function call like the following.
 
-```{r, eval=FALSE}
-con <- dbConnect(dbDriver("PostgreSQL"), host=Sys.getenv("PGHOST"), dbname="dvdrental", 
-                 user=Sys.getenv("PGUSER"), password=Sys.getenv("PGPASSWORD")) 
-```
-
-If you omit the username and password, it will look for a [`.pgpass`](https://www.postgresql.org/docs/current/static/libpq-pgpass.html) file.  Alternatively, you can use an [`.Renviron`](https://stat.ethz.ch/R-manual/R-devel/library/base/html/Startup.html) file that R will load on start-up to make available environment variables to you in your session.
-
 Note: this code was generated on my local machine connected to a local copy of the database.
 
 ```{r}
-con <- dbConnect(dbDriver("PostgreSQL"), host="localhost", dbname="dvdrental")
+con <- dbConnect(RPostgres::Postgres(), host="localhost", dbname="dvdrental")
 ```
 
-We will need a connection like this for any of the methods of connecting below.
+We will need a connection like this for any of the methods of connecting below.  You can have multiple connection objects to different databases -- just call the variables something different.
+
+Note that the above example doesn't have a username or password because the database is local and doesn't require one.  If you're using a remote database, you don't want to hard core your credentials into your code.  There are ways to set environment variables or, for PostgreSQL specifically, use a .pgpass file to store this information.  But RStudio also gives you the option to pop up a box to enter the information:
+
+```{r, eval=FALSE}
+con2 <- dbConnect(RPostgres::Postgres(), 
+                  host="localhost", 
+                  dbname="dvdrental",
+                  user=rstudioapi::askForPassword("Database username"),
+                  password=rstudioapi::askForPassword("Database password"))
+```
+
 
 # Using DBI
 
@@ -72,6 +74,8 @@ actor_subset <- dbGetQuery(con, "select * from actor where actor_id > 50")
 head(actor_subset)
 ```
 
+Note that we don't need a `;` at the end of the query.
+
 If we want an entire table, there's a function for that:
 
 ```{r}
@@ -79,6 +83,42 @@ actor <- dbReadTable(con, "actor")
 head(actor)
 ```
 
+If you want part of your query to be determined by a variable -- especially if it's a variable supplied or defined as input or by a user (not you) -- you should guard against SQL injection (someone trying to attack your database by tricking your code into running malicious SQL statements) by using a parameterized query:
+
+```{r}
+# YES
+myquery <- dbSendQuery(con, "select * from actor where actor_id = $1")
+dbBind(myquery, list(5))
+dbFetch(myquery)
+```
+
+The `$1` stands in for a value you'll substitute in.  For multiple, you can use `$2`, etc.  (The `$1` notation is for PostgreSQL -- other types of databases use `?` or other symbols.)
+
+When you're done with the results from a prepared query, clear the result:
+
+```{r}
+dbClearResult(myquery)
+```
+
+
+```{r, eval=FALSE}
+# NO! - at least not if the variable can be manipulated by a user
+dbSendQuery(con, paste0("select * from actor where actor_id=", myvar))
+```
+
+For more, see http://db.rstudio.com/best-practices/run-queries-safely/.
+
+Parameterizing statements also lets you reuse them with different values.
+
+You may also need to use `dbClearResult()` after other calls to `dbSendQuery()` that return a result (select statements, table creations, inserts, updates) -- but not to `dbGetQuery()`.  Otherwise you may get some warning messages like:
+
+```{asis}
+Warning message:
+In result_create(conn@ptr, statement) :
+  Closing open result set, cancelling previous query
+```
+
+Which are ok, but could get annoying.
 
 ## Modifying a Database
 
@@ -87,8 +127,6 @@ If you're not a superuser on the `dvdrental` database, just try connecting to a 
 ```{r, eval=FALSE}
 dbSendQuery(con, statement="update actor set actor_id=5000 where actor_id=5")
 ```
-
-Note that the `DBI` package does not support parameterized queries, and thus there are no good protections against SQL injection.  If you want parameterized queries, you'll have to look at other packages not covered in this document.
 
 To create a table, you can give it a data frame
 
@@ -118,64 +156,6 @@ dbDisconnect(con)
 
 There are also methods for managing transactions if you need: `dbBegin`, `dbRollback`, `dbCommit`. Transactions are key for when you need to be sure that a sequence of SQL commands (e.g. `UPDATE`, `CREATE`, `DROP`, `DELETE`, etc.) execute correctly before they're made permanent (i.e. "committed").
 
-If you are running an automated ETL ("Extract, Transform, Load") job, you might need assurances that your processes will execute safely - for example, suppose you regularly need to `DELETE` certain rows and replace them by `INSERT`ing new rows? What if the `INSERT` statement fails, so that all you've done is deleted data? You wouldn't want this to ever happen to a production data store. Transactions allow you to approach your ETL as an "all or nothing" process, whereby if *any* part of your data manipulation fails, none of the process is executed (all of it is rolled back).
-
-Let's suppose you work for the DVD rental company, and your boss wants you to create a set of movie recommendations for each customer and refresh that data every week. Every week this job consists of
-
-* Creating a fresh set of (`film_id`, `customer_id`) recommendation data. 
-    + For the purposes of this demo, let's assume this already happened, and that the recommendations are in a file called `datafiles/movierecs.csv`. If you're curious as to how to make a basic movie recommender model, check out Frank's [`gist`](https://gist.github.com/ffineis/b9773c4117c83a464312b4bf46421486).
-* Clearing out old recommendations into the `film_customer` relationship table.
-* Inserting new recommendations into the `film_customer` relationship table.
-
-```{r}
-# start by loading in movie recommendation data, which is just movie <> film tuples
-movieRecDF <- read.csv('../datafiles/movierecs.csv')
-head(movieRecDF, n = 3)
-```
-
-People usually perform bulk update/inserts into a table in 3 steps:
-
-1. Move new data into a staging (i.e. temporary) table.
-2. Use `INSERT` or `UPDATE` to dump data from the staging table into your "target" table.
-3. `DROP` the staging table.
-
-It's convenient to use a `tryCatch` to catch any errors during your process and roll back those changes when errors occur.
-
-```{r, eval=FALSE}
-
-# Check if film_customer table exists
-if(!'film_customer' %in% dbListTables(con)){
-  warning('film_customer table not found! Go check out SQL to build this table: http://bit.ly/2j3Sx65')
-}
-
-# Name your staging table. Sys.time part helps keep table unique.
-stagingTableName <- paste0('film_customer_temp_', as.integer(Sys.time()))
-
-# ETL transaction block.
-out <- tryCatch({
-  dbBegin(con) # Alternatively, could use DBI::dbExecute(con, 'BEGIN TRANSACTION;')
-  out <- dbWriteTable(con
-                      , name = stagingTableName
-                      , value = movieRecDF
-                      , overwrite = TRUE)
-  remove <- paste0('DELETE FROM film_customer WHERE customer_id IN (SELECT customer_id FROM '
-                   , stagingTableName
-                   , ')')
-  out <- dbExecute(con, remove)
-  insert <- paste0('INSERT INTO film_customer (film_id, customer_id) SELECT film_id, customer_id FROM '
-                   , stagingTableName)
-  out <- dbExecute(con, insert)
-  drop <- paste0('DROP TABLE '
-                 , stagingTableName)
-  out <- dbExecute(con, drop)
-  dbCommit(con)
-  }, error = function(e) {
-    warning('Something went wrong in film_customer refresh. Rolling back.')
-    dbRollback(con)
-  }
-)
-```
-
 
 # Use `dplyr`
 
@@ -198,7 +178,7 @@ library(dbplyr)
 First, connect like normal
 
 ```{r, echo=TRUE}
-con <- dbConnect(dbDriver("PostgreSQL"), host="localhost", dbname="dvdrental")
+con <- dbConnect(RPostgres::Postgres(), host="localhost", dbname="dvdrental")
 ```
 
 Get a reference to a table:
@@ -275,20 +255,20 @@ By default, it creates a temporary table.  But this is a setting you can change,
 
 Disconnect like we normally do
 
-```{r}
+```{r, eval=FALSE}
 dbDisconnect(con)
 ```
 
 
 
-# RMarkdown
+# R Markdown 
 
-RMarkdown notebooks let you execute SQL queries directly.  You first set up a `DBI` connection like above, and then, instead of having R chunks of code, you can have SQL chunks of code:
+R Markdown lets you execute SQL queries directly.  You first set up a `DBI` connection like above, and then, instead of having R chunks of code, you can have SQL chunks of code:
 
 ````r
 `r ''````{r}
 library(RPostgreSQL)
-con <- dbConnect(dbDriver("PostgreSQL"), host="localhost", dbname="dvdrental")
+con <- dbConnect(RPostgres::Postgres(), host="localhost", dbname="dvdrental")
 ```
 ````
 
@@ -307,9 +287,9 @@ dbDisconnect(con)
 
 Here is the above, actually executed in RMarkdown:
 
-```{r}
-library(RPostgreSQL)
-con <- dbConnect(dbDriver("PostgreSQL"), host="localhost", dbname="dvdrental")
+```{r, eval=FALSE}
+library(RPostgres)
+con <- dbConnect(RPostgres::Postgres(), host="localhost", dbname="dvdrental")
 ```
 
 ```{sql, connection=con}
@@ -329,10 +309,6 @@ Database administrators can install functionality in a PostgreSQL database to al
 
 We aren't covering PL/R (or even writing SQL functions more generally), but it's good to know this functionality exists if you're ever working with a large production system.
 
-
-# RStudio
-
-Coming soon to RStudio is a databases [connection pane](http://db.rstudio.com/connections) that helps you manage database connections and write the R code needed to connect.  It will provide an interface more like DataGrip.
 
 
 
