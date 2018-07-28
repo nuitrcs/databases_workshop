@@ -151,7 +151,8 @@ $(document).ready(function () {
 </div>
 <div id="connection" class="section level1">
 <h1>Connection</h1>
-<p>The <code>DBI</code> package has the core functionality of connecting R to database servers. There are then packages that implement the core functionality of <code>DBI</code> for each specific implementation of SQL. A package for PostgreSQL is <code>RPostgres</code>. (Note: this workshop previously used <code>RPostgreSQL</code> but the newer package <code>RPostgres</code> is more fully compliant with the <code>DBI</code> API.)</p>
+<p>The <code>DBI</code> package has the core functionality of connecting R to database servers. There are then packages that implement the core functionality of <code>DBI</code> for each specific implementation of SQL. A package for PostgreSQL is <code>RPostgres</code>.</p>
+<p><em>Note: this workshop previously used <code>RPostgreSQL</code> but the newer package <code>RPostgres</code> is more fully compliant with the <code>DBI</code> API. If you’re using <code>RPostgreSQL</code>, prepared queries won’t work. And you should replace <code>RPostgres::Postgres()</code> in the connection function with <code>dbDriver(&quot;PostgreSQL&quot;)</code>.</em></p>
 <pre class="r"><code>if(!'RPostgres' %in% installed.packages()){
   install.packages(&quot;RPostgres&quot;)
 }</code></pre>
@@ -224,6 +225,9 @@ dbFetch(myquery)</code></pre>
 dbSendQuery(con, paste0(&quot;select * from actor where actor_id=&quot;, myvar))</code></pre>
 <p>For more, see <a href="http://db.rstudio.com/best-practices/run-queries-safely/" class="uri">http://db.rstudio.com/best-practices/run-queries-safely/</a>.</p>
 <p>Parameterizing statements also lets you reuse them with different values.</p>
+<p>You may also need to use <code>dbClearResult()</code> after other calls to <code>dbSendQuery()</code> that return a result (select statements, table creations, inserts, updates) – but not to <code>dbGetQuery()</code>. Otherwise you may get some warning messages like:</p>
+<p>Warning message: In result_create(<a href="mailto:conn@ptr">conn@ptr</a>, statement) : Closing open result set, cancelling previous query</p>
+<p>Which are ok, but could get annoying.</p>
 </div>
 <div id="modifying-a-database" class="section level2">
 <h2>Modifying a Database</h2>

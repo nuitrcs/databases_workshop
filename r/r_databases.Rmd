@@ -21,7 +21,9 @@ R is generally better suited to selecting data from databases than for creating 
 
 # Connection
 
-The `DBI` package has the core functionality of connecting R to database servers.  There are then packages that implement the core functionality of `DBI` for each specific implementation of SQL.  A package for PostgreSQL is `RPostgres`. (Note: this workshop previously used `RPostgreSQL` but the newer package `RPostgres` is more fully compliant with the `DBI` API.)
+The `DBI` package has the core functionality of connecting R to database servers.  There are then packages that implement the core functionality of `DBI` for each specific implementation of SQL.  A package for PostgreSQL is `RPostgres`. 
+
+*Note: this workshop previously used `RPostgreSQL` but the newer package `RPostgres` is more fully compliant with the `DBI` API.  If you're using `RPostgreSQL`, prepared queries won't work.  And you should replace `RPostgres::Postgres()` in the connection function with `dbDriver("PostgreSQL")`.*
 
 ```{r, eval=FALSE}
 if(!'RPostgres' %in% installed.packages()){
