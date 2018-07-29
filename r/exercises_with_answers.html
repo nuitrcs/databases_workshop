@@ -11,7 +11,7 @@
 
 <meta name="author" content="Christina Maimone" />
 
-<meta name="date" content="2018-07-27" />
+<meta name="date" content="2018-07-29" />
 
 <title>R Database Exercises</title>
 
@@ -124,7 +124,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">R Database Exercises</h1>
 <h4 class="author"><em>Christina Maimone</em></h4>
-<h4 class="date"><em>2018-07-27</em></h4>
+<h4 class="date"><em>2018-07-29</em></h4>
 
 </div>
 
@@ -137,7 +137,7 @@ rmarkdown::render('exercises_with_answers.Rmd',
 <div id="exercise-selecting-random-data" class="section level2">
 <h2>Exercise: Selecting Random Data</h2>
 <p>One thing that isn’t easy to do with SQL is selecting random rows. There are functions to generate random values, but generating a new random column on a large table, and then sorting by that column (or computing the max value and then selecting an observation) is costly. This is one scenario when working with a database from R (or another program) is useful.</p>
-<p>Use the code below to create a table in the database. Then figure out how to select 3 random rows from that table (as if you didn’t have access to the code or values that created the table). Do this without reading the entire table into R. Hint: you’ll probably want to use some combination of sorting the table, limiting the number of rows you retrieve, and offsetting results (which we probably didn’t cover: learn more <a href="http://www.postgresqltutorial.com/postgresql-limit/">here</a> or <a href="https://www.tutorialspoint.com/postgresql/postgresql_limit_clause.htm">here</a>).</p>
+<p>Use the code below to create a table in the database. Then figure out how to select 3 random rows from that table (as if you didn’t have access to the code or values that created the table). Do this without reading the entire table into R. Hint: you’ll probably want to use some combination of sorting the table, limiting the number of rows you retrieve, and offsetting results (learn more <a href="http://www.postgresqltutorial.com/postgresql-limit/">here</a> or <a href="https://www.tutorialspoint.com/postgresql/postgresql_limit_clause.htm">here</a> if you need a refresher).</p>
 <p>Remember to set the connection information as appropriate.</p>
 <p>The new argument <code>bigint</code> in the connection function tells the package how to translate data from the database into R.</p>
 <pre class="r"><code>library(RPostgres)
@@ -172,9 +172,9 @@ for (offset in rownums) {
 }
 selectedrows</code></pre>
 <pre><code>##    id  name
-## 1 550 PXQRS
-## 2 699 FMXGP
-## 3  85 HIWFG</code></pre>
+## 1 973 MZVKR
+## 2 793 NUHVW
+## 3 229 LKAUW</code></pre>
 <p>We used paste function above because we have control over offset – it would be better to use a prepared query, but since we aren’t getting input from a user, it’s not super dangerous.</p>
 <p>An alternative approach, which could work well if the table isn’t too big, is to retrieve all of the IDs, and then randomly sample the IDs, and retrieve just those rows.</p>
 <pre class="r"><code>dbDisconnect(con)</code></pre>
@@ -229,7 +229,7 @@ custtbl %&gt;%
 </ul>
 <p>Populate the tables with information about your friends and/or family. Hint: think about how you want to handle IDs for people so that you can use them in the relationship table. Hint 2: think about how to make it clear in the relationship table what the direction of the relationship is (e.g. who is the child and who is the parent?). Hint 3: you can use <code>dbWriteTable</code> to add data to an existing table – set the <code>append</code> argument.</p>
 <p>Once you have the tables created, select data from the database and print out sentences describing the family relationships.</p>
-<p>Note: the process of creating database tables and populating them from R is a bit messy and doesn’t have a good natural workflow. This exercise is to help you get used to doing it, but you generally want to avoid creating databases from R in most circumstances. Use R to select data from databases, not create databases.</p>
+<p>Note: the process of creating database tables and populating them from R is a bit messy and doesn’t have a good natural workflow. This exercise is to help you get used to doing it, but you generally want to avoid creating databases from R in most circumstances. Use R to select data from databases, not create databases (at least stable, production ones).</p>
 <div id="solution-2" class="section level4">
 <h4>Solution</h4>
 <p>There are obviously multiple ways to do this. Here is one.</p>
