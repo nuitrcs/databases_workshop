@@ -39,6 +39,8 @@ Breaking this down piece by piece:
 * `first_name` and `last_name` are type text.  Text isn't a standard SQL type, so if you'll be working across different systems, you might use `varchar` or `char` instead.  With these, you'd specify the number of characters, but with text you don't.  
 * `admission_year` is a `smallint` which takes the range -32768 to 32767 (2 bits).  This range is sufficient for a year.  There are also `int` and `float` among some others.
 
+[PostgreSQL Types](https://www.postgresql.org/docs/current/static/datatype.html)
+
 Every table should have a primary key, although this isn't enforced in PostgreSQL.  You can use a combination of columns as the primary key instead of just defining it on one of them.
 
 What does the describe command tell us about our new table:
