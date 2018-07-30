@@ -216,6 +216,10 @@ SELECT * FROM customer;
            7 |        1 | Maria       | Miller       | maria.miller@sakilacustomer.org          |         11 | t          |           
 ```
 
+### Exercise
+
+Select the film\_id and title columns from the film table.
+
 ## `LIMIT`
 
 Instead of getting all rows, we can specify a limit of the number of rows to retrieve.
@@ -239,7 +243,33 @@ LIMIT 5;
 
 Here, we got all of the output on a single page, and we can see the row count output at the end.
 
-The order of the rows is not random, but it is not guaranteed to be in any particular order by default either.  
+The order of the rows is not random, but it is not guaranteed to be in any particular order by default either.  The order can change over time, and it is affected by which rows have been accessed recently.
+
+### Exercise
+
+Select 5 rows from the film table, getting all of the columns.
+
+## `OFFSET`
+
+We can  skip rows that would normally be at the beginning of the result set with offset.  This is useful usually when we sort the result set in a particular order, something we'll get to later. 
+
+```sql
+SELECT customer_id, store_id, first_name, last_name 
+FROM customer
+LIMIT 5
+OFFSET 10;
+```
+
+```sql
+ customer_id | store_id | first_name | last_name 
+-------------+----------+------------+-----------
+          10 |        1 | Dorothy    | Taylor
+          11 |        2 | Lisa       | Anderson
+          12 |        1 | Nancy      | Thomas
+          13 |        2 | Karen      | Jackson
+          14 |        2 | Betty      | White
+(5 rows)
+```
 
 ## `WHERE`
 
@@ -277,7 +307,22 @@ SELECT * FROM staff WHERE first_name='Jon';
 | <> or != | Not equal |
 | AND | Logical operator AND |
 | OR | Logical operator OR |
+| NOT | To negate boolean values |
 
+
+```sql
+SELECT * FROM staff where first_name != 'Jon';
+SELECT * FROM staff where first_name <> 'Jon';
+
+```
+
+### Exercises
+
+Select rows from the film table where the film\_id is less than 4.
+
+Select rows from the film table where the rating is PG.  
+
+Select rows from the film table where the rating is PG or G.
 
 
 ### `BETWEEN`
@@ -294,6 +339,10 @@ SELECT * FROM film WHERE film_id BETWEEN 1 AND 5;
 ```sql
 SELECT * FROM film WHERE film_id IN (3,5,7,9);
 ```
+
+### Exercise
+
+Select rows from the actor table where the first name is Angela, Angelina, or Audrey using `IN`.
 
 ### `LIKE`
 
@@ -347,6 +396,9 @@ dvdrental=# SELECT * FROM actor WHERE first_name ILIKE '%z%';
 
 See that we have results where Z is the first letter (since % can match 0 characters) as well as results where there's a z in the middle of the name.
 
+### Exercise
+
+Select rows from the city tabel where city starts with a B.
 
 ### `IS NULL`
 
@@ -367,7 +419,7 @@ There is also the opposite: `IS NOT NULL`.
 
 ## `ORDER BY`
 
-We can determine the order that our results are show in:
+We can determine the order that our results are shown in:
 
 ```sql
 SELECT film_id, title FROM film ORDER BY film_id;
@@ -385,12 +437,22 @@ This is often useful to combine with `LIMIT`:
 SELECT film_id, title FROM film ORDER BY film_id DESC LIMIT 5;
 ```
 
+And with `OFFSET` to view results in smaller chunks:
+
+```sql
+SELECT film_id, title FROM film ORDER BY film_id DESC LIMIT 5 OFFSET 5;
+```
+
 You can order by multiple columns:
 
 ```sql
 SELECT customer_id, rental_id FROM rental 
 ORDER BY customer_id, rental_id;
 ```
+
+### Exercise
+
+Order the rows in city by country\_id and then by city.
 
 
 ## `DISTINCT`
@@ -448,7 +510,30 @@ To achieve this, you need to use a subquery, which we'll learn about in the next
 
 NOTE: the set of provided functions is not standard across different implementations of SQL, although there are some common core functions.
 
+If we wanted to count the number of distinct values in a column, we can use the count function in combination with `distinct`:
 
+```sql
+SELECT count(distinct postal_code) from address;
+```
+
+Count without distinct will count the number of rows that aren't null.
+
+```sql
+SELECT count(address2) from address;
+```
+
+Or we can use `*` to count the number of rows:
+
+```sql
+SELECT count(*) from address;
+```
+
+
+### Exercises
+
+What's the most you'd have to pay to replace a lost film from this dvd rental store?  What's the least?
+
+Use the count function to determine the number of different languages in the language table.
 
 
 ## `GROUP BY`
@@ -493,6 +578,10 @@ ERROR:  column "payment.amount" must appear in the GROUP BY clause or be used in
 LINE 1: SELECT customer_id, amount, count(*) FROM payment GROUP BY c...
 ```
 
+### Exercise
+
+Count the number of cities for each country id in the city table.  Order the results by count(\*).
+
 ## `HAVING`
 
 `HAVING` is similar to a `WHERE` clause but it applies to the result of a `GROUP BY` operation; `WHERE` applies before data are grouped by `GROUP BY`;
@@ -511,6 +600,10 @@ SELECT customer_id, sum(amount) FROM payment
 GROUP BY customer_id
 HAVING sum(amount) > 200;
 ```
+
+### Exercise
+
+Select the `country\_id`s from the city table that have more than 20 cities associated with them (`country\_id`s that appear more than 20 times).
 
 
 ## Dates
