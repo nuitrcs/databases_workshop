@@ -128,6 +128,7 @@ practice=# select * from color;
 
 ```
 
+When dropping tables that are referenced by other tables, you are likely to get an error.  If another table depends on the table you're trying to delete, you have to update or delete that table first.  
 
 # Changing and Deleting Rows in a Table
 
@@ -203,6 +204,6 @@ DELETE FROM workshop WHERE id=4;
 commit;
 ```
 
-
+Note that if you try to delete rows that are referenced in other tables via foreign keys, you'll get an error. You'll need to update or delete references first, or manage these relationships automatically with something called [cascades](https://www.postgresql.org/docs/current/static/ddl-constraints.html#DDL-CONSTRAINTS-FK).
 
 
