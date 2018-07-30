@@ -127,13 +127,13 @@ Let's work through an example of players and teams.  When we're designing our da
 
 First Name  | Last Name  | Height  | Weight  | TeamName  | TeamCity  | StartingYear  | EndingYear 
 :---|:---|---|---|:---|:---|---|---
-LeBron  | James  | 81 | 249 | Cavaliers  | Cleveland  | 2003 | 2010
-LeBron  | James  | 81 | 249 | Heat  | Miami  | 2010 | 2014
-LeBron  | James  | 81 | 249 | Cavaliers  | Cleveland  | 2014 | 2018
-LeBron  | James  | 81 | 249 | Lakers | Los Angeles  | 2018 | 
-Tim  | Duncan  | 82 | 256 | Spurs  | San Antonio  | 1997 | 2016
-Chris  | Paul  | 72 | 175 | Hornets  | New Orleans  | 2005 | 2011
-Chris  | Paul  | 72 | 175 | Clippers  | Los Angeles  | 2011 | 2017
+LeBron | James | 81 | 249 | Cavaliers | Cleveland | 2003 | 2010
+LeBron | James | 81 | 249 | Heat | Miami | 2010 | 2014
+LeBron | James | 81 | 249 | Cavaliers | Cleveland | 2014 | 2018
+LeBron | James | 81 | 249 | Lakers | Los Angeles | 2018 | 
+Tim | Duncan | 82 | 256 | Spurs | San Antonio | 1997 | 2016
+Chris | Paul | 72 | 175 | Hornets | New Orleans | 2005 | 2011
+Chris | Paul | 72 | 175 | Clippers | Los Angeles | 2011 | 2017
 Chris | Paul | 72 | 175 | Rockets | Houston | 2017 | 
 
 
@@ -278,7 +278,25 @@ CREATE TABLE player_team (
 
 We could also just add an ID column to the table instead.  Having a primary key helps keep you from getting into a situation where you can't easily delete duplicate values from a table (or accidently introduce them in the first place).
 
+## Temporary Tables
 
+You can create tables from result sets as well:
+
+```sql
+CREATE TABLE a_actors AS 
+SELECT * FROM actor 
+WHERE actor.first_name LIKE 'A%';
+```
+
+When creating a table, you also have the option to make the table temporary -- it will be deleted when your database session ends.  This is often useful with tables created from select statements.
+
+```sql
+CREATE TEMP TABLE a_actors AS 
+SELECT * FROM actor 
+WHERE actor.first_name LIKE 'A%';
+```
+
+Temporary tables can be useful for creating intermediate tables (to help simplify or speed up complex queries) or result sets you may want to export or use later.
 
 # Exporting Data
 
@@ -287,6 +305,8 @@ You can use [Copy](https://www.postgresql.org/docs/current/static/sql-copy.html)
 ```sql
 \copy student TO '/Users/username/documents/mystudents.csv' CSV HEADER
 ```
+
+You can copy tables by name or enter a query in \(\) in that place instead.
 
 In `psql` there is also a `\o` command to open a file for writing (and then close it later):
 

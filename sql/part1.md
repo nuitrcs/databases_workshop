@@ -416,6 +416,14 @@ SELECT * FROM address WHERE address2 = '';
 
 There is also the opposite: `IS NOT NULL`.
 
+You cannot use `=NULL`.  The following returns no rows, even though there are 4 rows with a `NULL` address2:
+
+```sql
+SELECT * FROM address WHERE address2 = NULL;
+```
+
+`NULL` values are omitted from the results of comparison tests and other 
+
 
 ## `ORDER BY`
 
@@ -516,16 +524,23 @@ If we wanted to count the number of distinct values in a column, we can use the 
 SELECT count(distinct postal_code) from address;
 ```
 
-Count without distinct will count the number of rows that aren't null.
+Count without distinct will count the number of rows *that aren't null*.
 
 ```sql
 SELECT count(address2) from address;
 ```
 
-Or we can use `*` to count the number of rows:
+Or we can use `*` to count the total number of rows, including any with NULL in a column:
 
 ```sql
 SELECT count(*) from address;
+```
+
+`NULL` is not counted by `count`, even though it is returned as a result by `DISTINCT`.
+
+```sql
+SELECT DISTINCT address2 from address;
+SELECT count(DISTINCT address2) from address;
 ```
 
 

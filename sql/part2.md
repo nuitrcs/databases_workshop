@@ -78,6 +78,10 @@ SELECT count(customer_id) FROM
  HAVING count(*) > 30) AS foo;
 ```
 
+## Exercise
+
+Find the title of movies that have the maximum replacement fee.
+
 
 # Joins
 
@@ -142,10 +146,15 @@ FROM customer, address
 LIMIT 10;
 ```
 
+### Exercises
+
+Join the store table to the address table to add the address information to the store information.
+
+Select film\_id, category\_id, and name from joining the film\_category and category tables, only where the category\_id is less than 10.
 
 ### Table Names and Aliases
 
-We can select specific tables as well.  If a column name appears in both tables, then we have to specify the table name when selecting it.
+We can alias tables as well as columns.  If a column name appears in both tables, then we have to specify the table name when selecting it.
 
 ```sql 
 SELECT first_name, last_name, customer.address_id, postal_code 
@@ -195,6 +204,9 @@ FROM film f, film_actor fa, actor a
 WHERE f.film_id=fa.film_id AND fa.actor_id=a.actor_id;
 ```
 
+### Exercise
+
+Join store, address, and city tables to show the store\_id, address, and city name.
 
 
 ## `LEFT JOIN`
@@ -218,6 +230,10 @@ ON f.film_id=i.film_id
 WHERE i.film_id IS NULL;
 ```
 
+### Exercise
+
+Are all cities listed in the city table associated with an address?  If any aren't, which cities are they?
+
 
 ## `FULL OUTER JOIN`
 
@@ -228,7 +244,7 @@ There aren't any tables with this type of relationship to each other in the dvdr
 
 # Views 
 
-A view is a virtual table that has the results of a query in it.  You give it a name like you would a table, and you can use it like a table.  It's useful when you have common views of the data that you need to access often.  It's a way to save common queries, particularly ones that are long or complicated.
+A view is a virtual table that has the results of a query in it (a result set).  You give it a name like you would a table, and you can use it like a table.  It's useful when you have common views of the data that you need to access often.  It's a way to save common queries, particularly ones that are long or complicated.
 
 We can list views with 
 
@@ -242,6 +258,13 @@ And then select from them like a table
 select * from actor_info limit 5;
 ```
 
+You can create views with `CREATE VIEW` and a select query: 
 
+```sql
+CREATE VIEW named_film_actor AS 
+SELECT f.film_id, title, a.actor_id, first_name, last_name 
+FROM film f, film_actor fa, actor a
+WHERE f.film_id=fa.film_id AND fa.actor_id=a.actor_id;
+```
 
 

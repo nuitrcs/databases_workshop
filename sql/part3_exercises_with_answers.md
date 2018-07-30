@@ -9,11 +9,10 @@ Using the example in [Part 3](part3.md#an-example), create the tables and then p
 
 Hint: If you make a mistake, you might want to delete tables and start over.  If you need help deleting a table, please ask a workshop assistant or look at the material in the next part of the workshop to see the delete and drop commands.
 
-#### Solution
 
 ```sql
 CREATE TABLE player (
-	id serial PRIMARY KEY,
+	id int PRIMARY KEY,
 	first_name text NOT NULL,
 	last_name text NOT NULL,
 	height smallint CHECK (height > 0), 
@@ -21,7 +20,7 @@ CREATE TABLE player (
 );
 
 CREATE TABLE team (
-	id smallserial primary key, 
+	id smallint primary key, 
 	name text not null,
 	city text not null,
 	unique (name, city)
@@ -36,37 +35,36 @@ CREATE TABLE player_team (
 );
 ```
 
+#### Solution
+
 Add in the data using insert statements.
 
 ```sql
 INSERT INTO player -- don't need to specify columns if using all in order
-VALUES (default , ' LeBron ', ' James ',  81 ,  249), -- default indicates to assign the value
-(default , ' Tim ', ' Duncan ',  82 ,  256 ),
-(default , ' Chris ', ' Paul ',  72 ,  175),
-(default , ' Greg ', ' Monroe ',  83 ,  250);
+VALUES (default , 'LeBron', 'James',  81,  249), -- default indicates to assign the value
+(default , 'Tim', 'Duncan',  82,  256),
+(default , 'Chris', 'Paul',  72,  175);
 
 -- with the approach below, default is implied for the ID column
 INSERT INTO team (name, city)
-VALUES (' Cavaliers ', ' Cleveland'),
-(' Heat ', ' Miami'),
-(' Spurs ', ' San Antonio'),
-(' Hornets ', ' New Orleans'),
-(' Clippers ', ' Los Angeles'),
-(' Rockets ', ' Houston'),
-(' Pistons ', ' Detroit'),
-(' Bucks ', ' Milwaukee');
+VALUES ('Cavaliers', 'Cleveland'),
+('Heat', 'Miami'),
+('Spurs', 'San Antonio'),
+('Hornets', 'New Orleans'),
+('Clippers', 'Los Angeles'),
+('Rockets', 'Houston'),
+('Lakers', 'Los Angeles'));
 
 -- check the ID values below before inserting
 INSERT INTO player_team 
 VALUES (1 ,  1 ,  2003 ,  2010),
 (1 ,  2 ,  2010 ,  2014),
-(1 ,  1 ,  2014 ,  NULL),
+(1 ,  1 ,  2014 ,  2018),
+(1 ,  7 ,  2018 ,  NULL),
 (2 ,  3 ,  1997 ,  2016),
 (3 ,  4 ,  2005 ,  2011),
 (3 ,  5 ,  2011 ,  2017),
-(3 ,  6 ,  2017 ,  NULL),
-(4 ,  7 ,  2010 ,  2015),
-(4 ,  8 ,  2015 ,  NULL);
+(3 ,  6 ,  2017 ,  NULL);
 ```
 
 
