@@ -603,7 +603,7 @@ HAVING sum(amount) > 200;
 
 ### Exercise
 
-Select the `country\_id`s from the city table that have more than 20 cities associated with them (`country\_id`s that appear more than 20 times).
+Select the `country_id`s from the city table that have more than 20 cities associated with them (`country_id`s that appear more than 20 times).
 
 
 ## Dates
