@@ -85,11 +85,11 @@ Find the title of movies that have the maximum replacement fee.
 
 # Joins
 
-Looking at the database [schema](http://www.postgresqltutorial.com/postgresql-sample-database), we can see that information is split between lots of tables.  The lines between the tables show where there is a column in one table that is linked to a column in another table.  These are called foreign keys.  
+Looking at the database [diagram](http://www.postgresqltutorial.com/postgresql-sample-database), we can see that information is split between lots of tables.  The lines between the tables show where there is a column in one table that is linked to a column in another table.  These are called foreign keys.  
 
 There are also tables that only serve the purpose of linking two other tables to each other.  For example, the `film_actor` table.   
 
-In the schema, there are key icons next to some columns.  These columns are primary key columns.  A primary key can be a single column or a combination of multiple columns.  Primary keys have to have unique values.  They are frequently used to link tables to each other (although you could link tables with other columns too), and they are also used to index a table, which among other things makes lookups (where conditions) on those columns faster.
+In the diagram, there are key icons next to some columns.  These columns are primary key columns.  A primary key can be a single column or a combination of multiple columns.  Primary keys have to have unique values.  They are frequently used to link tables to each other (although you could link tables with other columns too), and they are also used to index a table, which among other things makes lookups (where conditions) on those columns faster.
 
 More on primary keys and foreign keys later, but for now, how to join tables.
 

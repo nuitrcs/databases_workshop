@@ -12,6 +12,8 @@ To connect to a database, you need the following information:
 
 You also need a client program to connect to the database.  It's suggested that you start with `psql`, which is a command-line client.  Output below is from `psql`.
 
+In the workshop, you only have permission to read data from the dvdrental database, not add, update, or delete data, or modify the database.  When we get to changing databases, you'll have access to a database you have permissions to modify.
+
 
 # Database Schema
 
@@ -398,7 +400,7 @@ See that we have results where Z is the first letter (since % can match 0 charac
 
 ### Exercise
 
-Select rows from the city tabel where city starts with a B.
+Select rows from the city table where city starts with a B.
 
 ### `IS NULL`
 
@@ -422,7 +424,7 @@ You cannot use `=NULL`.  The following returns no rows, even though there are 4 
 SELECT * FROM address WHERE address2 = NULL;
 ```
 
-`NULL` values are omitted from the results of comparison tests and other 
+`NULL` values are omitted from the results of comparison tests. 
 
 
 ## `ORDER BY`
