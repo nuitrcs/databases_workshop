@@ -58,6 +58,8 @@ _These resources use PostgreSQL or SQL generally._
 
 [Intermediate SQL Tutorial](https://www.dataquest.io/blog/sql-intermediate/): intermediate level SQL tutorial from Dataquest; uses PostgreSQL and Python (pandas, psycopg2) and includes exercises.  For when you're ready for more practice beyond the basics.
 
+[Intro to SQL: Querying and managing data](https://www.khanacademy.org/computing/computer-programming/sql) from Khan Academy
+
 
 
 ### SQLite
