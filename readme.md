@@ -50,17 +50,25 @@ This repository also includes materials for connecting to a database using Pytho
 
 _These resources use PostgreSQL or SQL generally._
 
+[Mode SQL Tutorials](https://mode.com/sql-tutorial/)
+
 [PostgreSQL Exercises](https://pgexercises.com/): interactive, online exercises to practice SQL skills in a PostgreSQL environment.  
 
 [SQL Tutorial](https://sqlzoo.net/): from SQL Zoo.  Not specific to PostgreSQL.  Also has interactive exercises. 
+
+[Learn SQL](https://www.codecademy.com/courses/learn-sql/) from Code Academy with a free interactive online course
 
 [Try SQL](https://www.codeschool.com/courses/try-sql): from Code School; the basic course is free.  Interactive, online tutorial.
 
 [Intermediate SQL Tutorial](https://www.dataquest.io/blog/sql-intermediate/): intermediate level SQL tutorial from Dataquest; uses PostgreSQL and Python (pandas, psycopg2) and includes exercises.  For when you're ready for more practice beyond the basics.
 
+[Welcome to SQL](https://www.khanacademy.org/computing/hour-of-code/hour-of-sql/v/welcome-to-sql) from Khan Academy provides a one-hour intro to databases that includes writing SQL to create tables, insert data, and query data.
+
 [Intro to SQL: Querying and managing data](https://www.khanacademy.org/computing/computer-programming/sql) from Khan Academy
 
+[Intro to SQL](https://www.kaggle.com/learn/intro-to-sql) from Kaggle uses Google's BigQuery instead of PostgreSQL.  Commands are generally standard SQL though.
 
+[SQL for Data Analysis](https://www.udacity.com/course/sql-for-data-analysis--ud198#) from Udacity - an online self-paced course
 
 ### SQLite
 
