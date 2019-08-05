@@ -352,9 +352,13 @@ Yes, there are days without 24 observations. What about days that are missing en
 
 Are there days for any airports where there are no weather observations at all?
 
-Hint: one way to do this is to see what the normal number of days per airport is in the data (if there is a normal value), and then look for abnormal values.
+Note that you can't do: `count(distinct year, month, day)` - you'll get an error.  So you'll need to use a subquery.
 
-Hint 2: Look at the subquery section above for an example query that might be useful.
+Step 1: select distinct dates by origin airport.
+
+Step 2: Count number of days by origin airport from the results of Step 1 (step 1 becomes a subquery).
+
+This won't exactly tell you what days are missing, but it will let you compare the number of days there to the expected number of days in a year.
 
 Bonus exercise: Which hour of the day is most likely to be missing a weather observation?
 
