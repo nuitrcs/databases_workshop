@@ -13,7 +13,7 @@ We cover:
 * [Date functions](#date-functions)
 
 
-This workshop uses PostgreSQL, and it was written for version 11.4.  Much of the material though is relevant to other database systems and earlier versions of Postgres.  
+This workshop uses PostgreSQL, and it was written for version 11.4.  Much of the material though is relevant to other database systems and nearly all is the same for earlier versions of Postgres.  
 
 # Exploring a Database
 
@@ -156,6 +156,8 @@ WHERE ___ = ___;
 
 Using cross joins above works only because `minyear` and `oldplane` each only have one row -- otherwise you'd get wrong results.
 
+[Answers](explore_answers.md)
+
 ## Food Inspections
  
 Food inspection data source information: 
@@ -179,7 +181,7 @@ Select violations for inspections where the inspection score was below 80.  Sele
 
 Bonus: What is the most common violation type in inspections with total scores less than 80? 
 
-
+[Answers](explore_answers.md)
 
 # Data Types and Missing Data
 
@@ -227,6 +229,7 @@ LIMIT 10;
 
 Select `time_hour` and `time_hour` cast as date from `weather`; limit to a few rows.
 
+[Answers](explore_answers.md)
 
 ## `NULL`
 
@@ -328,6 +331,7 @@ Are there any missing values in the food inspection data?
 
 Which column in the weather table has the most missing values?
 
+[Answers](explore_answers.md)
 
 ## Missing Rows
 
@@ -357,7 +361,7 @@ Bonus exercise: Which hour of the day is most likely to be missing a weather obs
 Bonus exercise 2: Are there any duplicate measurements (same airport and time) in the weather data?
 
 
-
+[Answers](explore_answers.md)
 
 
 
@@ -433,6 +437,7 @@ Bonus: Find any violation entries that do not conform to the pattern of most ent
 
 Bonus: Get all addresses where the street name starts with A (and only those addresses).
 
+[Answers](explore_answers.md)
 
 # String Functions
 
@@ -477,7 +482,7 @@ ORDER BY count;
 
 Get just the street name from the business address (the result won't be perfect at this stage -- just do what you can with a simple query).  Group and count to see which street has the most food businesses.
 
-Note: 
+[Answers](explore_answers.md)
 
 ## String length
 
@@ -569,6 +574,8 @@ Check the output of:
 SELECT DISTINCT split_part(address, ' ', 2)
 FROM business;
 ```
+
+[Answers](explore_answers.md)
 
 # CASE WHEN
 
@@ -672,7 +679,7 @@ How much total precipitation did each airport get by month?  Hint: Use `sum()`, 
 
 Bonus: Using the results above, compute the average for each month across the three airports.
 
-
+[Answers](explore_answers.md)
 
 ## Two-variable Statistics
 
@@ -759,6 +766,8 @@ Date/time functions: https://www.postgresql.org/docs/current/functions-datetime.
 SELECT min(date), max(date) 
 FROM inspections;
 ```
+
+[Answers](explore_answers.md)
 
 ## Date/time parts
 
@@ -877,7 +886,7 @@ WHERE ___;
 
 What days of the week are days without inspections?  Any that aren't on the weekend?
 
-
+[Answers](explore_answers.md)
 
 ## Lead and Lag
 
@@ -935,6 +944,8 @@ WHERE diff = (___);
 ```
 
 Bonus: Can you write a query to select all rows where the `time_hour` date part is the day where the max change was observed?  Use `date_trunc()` with the part of the date you're truncating to being the `'day'`, and compare this to the date you want (ex. `'2013-01-01'`).  
+
+[Answers](explore_answers.md)
 
 # Bringing it Together
 
