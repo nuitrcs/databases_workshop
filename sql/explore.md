@@ -168,6 +168,21 @@ Food inspection data source information:
 
 What's in this data?  Select a few rows from each table to take a look.
 
+Just because there isn't a formal foreign key relationship between tables, doesn't mean we can't join them.
+
+Let's see how many violations per inspection.  
+
+Inspections are identified by a license number and a date.  
+
+```sql
+SELECT inspections.license, score, inspections.date, count(violation)
+FROM inspections
+LEFT JOIN violations
+ON inspections.date = violations.date 
+AND inspections.license = violations.license
+GROUP BY inspections.license, inspections.date, score;
+```
+
 
 ### EXERCISES
 
