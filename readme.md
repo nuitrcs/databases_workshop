@@ -4,7 +4,7 @@ There are four databases workshops that cover parts of the material in this repo
 
 The workshops use PostgreSQL.  Much of the material applies generically to SQL and other relational database systems, but some of it is specific to PostgreSQL.
 
-Some of the workshops use the database discussed in, and follow much of the content of, the [PostgreSQL Tutorial](http://www.postgresqltutorial.com/), which makes use of the [Skalia database](https://www.jooq.org/sakila).
+Some of the workshops use the database discussed in, and follow much of the content of, the [PostgreSQL Tutorial](http://www.postgresqltutorial.com/), which makes use of the [Saklia database](https://www.jooq.org/sakila).
 
 
 ## Selecting and Joining Data
