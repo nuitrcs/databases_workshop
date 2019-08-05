@@ -30,8 +30,6 @@ In the output above, the name of the column is the alias.
 
 One important note is that _column_ aliases can't be used in where or having clauses:
 
-TODO: check
-
 ```sql
 SELECT title, rating AS rate
 FROM film 
@@ -138,10 +136,9 @@ FROM customer
 INNER JOIN address 
 ON customer.address_id = address.address_id
 GROUP BY postal_code
-ORDER BY count;
+ORDER BY count DESC;
 ``` 
 
-TODO: check above
 
 ### Alternative Syntax
 

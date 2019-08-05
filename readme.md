@@ -21,7 +21,7 @@ The workshop follows the files below, which have links to the exercises.
 
 ## Exploring Data
 
-See [Exploring Data](sql/exploring.md) for materials and exercises.
+See [Exploring Data](sql/explore.md) for materials and exercises.
 
 This workshop uses data files from the [nycflights13 R package](https://github.com/hadley/nycflights13) and open data from the city of Evanston.
 

@@ -7,6 +7,9 @@ All of these exercises use the `dvdrental` database.
 
 Exercises often use multiple commands or aspects of SQL, but they are titled/grouped by their focus.
 
+[Answers](part1_exercises_with_answers.md)
+
+
 
 ## Exercise: Describe Commands
 

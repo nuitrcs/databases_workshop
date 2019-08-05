@@ -642,18 +642,22 @@ Select the `country_id`s from the city table that have more than 20 cities assoc
 So far, we've selected numeric values and string values.  There are also other types, with one of the most common of those being dates.  Dates are in the format `YYYY-MM-DD`.  
 
 ```sql
-SELECT count(*) FROM customer WHERE create_date = '2006-02-14';
+SELECT count(*) 
+FROM customer 
+WHERE create_date = '2006-02-14';
 ```
 
 Timestamps are dates with a time (and possibly timezone) also attached.  
 
 
 ```sql
-SELECT rental_date FROM rental WHERE rental_date < '2005-05-25';
+SELECT rental_date 
+FROM rental 
+WHERE rental_date < '2005-05-25';
 ```
 
 ```sql
-dvdrental=# select rental_date from rental where rental_date<'2005-05-25';
+dvdrental=# SELECT rental_date FROM rental WHERE rental_date < '2005-05-25';
      rental_date     
 ---------------------
  2005-05-24 22:53:30
@@ -669,7 +673,13 @@ dvdrental=# select rental_date from rental where rental_date<'2005-05-25';
 
 This will get you everything before 2005-05-25 00:00:00.  
 
-TODO: check date equality
+Note that you want to use `>` or `<` with timestamps, because date equality for just the date part doesn't work:
+
+```sql
+SELECT rental_date 
+FROM rental
+WHERE rental_date = '2005-05-24';
+```
 
 ---
 
