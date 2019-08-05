@@ -1,5 +1,23 @@
 # SQL Part 1
 
+* [Connecting](#connecting)
+* [Select basics](#select)
+* [`LIMIT`](#limit)
+* [`OFFSET`](#offset)
+* [`WHERE`](#where)
+    - [`BETWEEN`](#between)
+    - [`IN`](#in)
+    - [`LIKE`](#like)
+    - [`IS NULL`](#is-null)
+* [`ORDER BY`](#order-by)
+* [`DISTINCT`](#distinct)
+* [Functions and Arithmetic](#functions-and-arithmetic)
+* [`GROUP BY`](#group-by)
+* [`HAVING`](#having)
+* [Dates](#dates)
+
+
+
 ## Connecting
 
 To connect to a database, you need the following information:
@@ -10,10 +28,9 @@ To connect to a database, you need the following information:
 * Password: 
 * Port: 5432 (default for PostgreSQL)
 
-You also need a client program to connect to the database.  It's suggested that you start with `psql`, which is a command-line client.  Output below is from `psql`.
+You also need a client program to connect to the database.  Output below is from a command line client called `psql`.  
 
-In the workshop, you only have permission to read data from the dvdrental database, not add, update, or delete data, or modify the database.  When we get to changing databases, you'll have access to a database you have permissions to modify.
-
+In the introductory workshop, you only have permission to read data from the dvdrental database, not add, update, or delete data, or modify the database.  
 
 # Database Schema
 
@@ -23,7 +40,9 @@ The schema (the set of tables, their columns and types, and the relationships be
 
 We can also get information directly from the database itself.  These commands are specific to each database system.  The commands below are for PostgreSQL.  
 
-First, use `\d` to get a list of relations (tables, views, sequences) -- we'll talk about what views and sequences are later.  
+## `psql` describe commands
+
+With `psql`, you can use `\d` to get a list of relations (tables, views, sequences).
 
 ```sql
 \dvdrental=# \d
@@ -127,15 +146,51 @@ There are also other `\d` describe functions, among them:
 
 You can get a complete list of backslash commands with `\?`.
 
+
+## Other programs
+
+Each database client will have its own way to show you information about the tables in the database.  
+
+## Useful Notes
+
+A useful setting for psql is:
+
+```sql
+\pset format wrapped
+```
+
+Comments in SQL files:
+
+```sql
+/* this is a comment; it can 
+span multiple lines */
+
+SELECT * FROM actor; /* this is also a comment */
+
+-- this is a single line comment
+
+SELECT * from actor; -- another single line comment
+```
+
+
+
+
 # `SELECT`
 
-Select is the command we use most often in SQL.  It let's us select data (specified rows and columns) from one or more tables.  Columns are selected by name, rows are selected with conditional statements (values of a particular column meeting some criteria).  
+Select is the command we use most often in SQL.  It lets us select data (specified rows and columns) from one or more tables.  Columns are selected by name, rows are selected with conditional statements (values of a particular column meeting some criteria).  
 
 The basic format of a `SELECT` command is 
 
 ```sql
-SELECT column_1, column_2 
-FROM table1;
+SELECT <columns>
+FROM <table>;
+```
+
+For example:
+
+```sql
+SELECT actor_id, first_name
+FROM actor;
 ```
 
 `SELECT` and `FROM` are reserved keywords.  SQL is case-insensitive, but many times you'll see the key terms in all caps.  Note that you use a semicolon `;` to end the statement.  You can also split a SQL statement across multiple lines -- the space between the terms doesn't matter (a new line counts as space).  
@@ -285,7 +340,7 @@ SELECT * FROM customer WHERE store_id=2;
 
 (_Note: Going forward, output will only be included when there's something about it to discuss._)
 
-You can combined conditions together with `AND` and `OR`:
+You can combine conditions together with `AND` and `OR`:
 
 ```sql
 SELECT * FROM customer WHERE store_id=2 AND customer_id=400;
@@ -346,61 +401,13 @@ SELECT * FROM film WHERE film_id IN (3,5,7,9);
 
 Select rows from the actor table where the first name is Angela, Angelina, or Audrey using `IN`.
 
-### `LIKE`
+---
 
-`LIKE` lets you do pattern matching on strings.  The only two pattern characters are `_` for a single character and `%` for any number of characters (including none).  In some implementations of SQL, `LIKE` is case-insensitive.  In PostgreSQL, it is case-sensitive; `ILIKE` is the PostgreSQL case-insensitive version.
+Break for exercises: [part1_exercises.md](part1_exercises.md) - sections Describe Commands and Select.
 
-Get names of actors that start with A.
+---
 
-```sql
-SELECT * FROM actor WHERE first_name LIKE 'A%';
-```   
 
-Note that the following will yield no results:
-
-```sql
-SELECT * FROM actor WHERE first_name LIKE 'a%';
-``` 
-
-But the following is ok:
-
-```sql
-SELECT * FROM actor WHERE first_name ILIKE 'a%';
-``` 
-
-Get 4 letter names starting with A:
-
-```sql
-SELECT * FROM actor WHERE first_name LIKE 'A___';
-```
-
-Get names that end with y:
-
-```sql
-SELECT * FROM actor WHERE first_name LIKE '%y';
-```
-
-Any names with a z in them?
-
-```sql
-SELECT * FROM actor WHERE first_name ILIKE '%z%';
-```
-
-```sql
-dvdrental=# SELECT * FROM actor WHERE first_name ILIKE '%z%';
- actor_id | first_name | last_name |      last_update       
-----------+------------+-----------+------------------------
-       11 | Zero       | Cage      | 2013-05-26 14:47:57.62
-       89 | Charlize   | Dench     | 2013-05-26 14:47:57.62
-      121 | Liza       | Bergman   | 2013-05-26 14:47:57.62
-(3 rows)
-```
-
-See that we have results where Z is the first letter (since % can match 0 characters) as well as results where there's a z in the middle of the name.
-
-### Exercise
-
-Select rows from the city table where city starts with a B.
 
 ### `IS NULL`
 
@@ -425,6 +432,8 @@ SELECT * FROM address WHERE address2 = NULL;
 ```
 
 `NULL` values are omitted from the results of comparison tests. 
+
+
 
 
 ## `ORDER BY`
@@ -477,6 +486,11 @@ SELECT DISTINCT customer_id, staff_id FROM payment;
 SELECT DISTINCT amount FROM payment ORDER BY amount;
 ```
 
+---
+
+Break for exercises: [part1_exercises.md](part1_exercises.md) - sections for Like, Distinct, and Order by exercises
+
+---
 
 
 ## Functions and Arithmetic
@@ -653,38 +667,18 @@ dvdrental=# select rental_date from rental where rental_date<'2005-05-25';
 (8 rows)
 ```
 
-This will get you everything before 2005-05-25 00:00:00.  If you want just the date part of a datetime:
+This will get you everything before 2005-05-25 00:00:00.  
 
-```sql
-SELECT rental_date FROM rental 
-WHERE date_trunc('day', rental_date) = '2005-05-24';
-```
+TODO: check date equality
 
-or
+---
 
-```sql
-SELECT rental_date FROM rental
-WHERE cast(rental_date as date) = '2005-05-24';
-```
+Break for exercises: [part1_exercises.md](part1_exercises.md) - remaining sections
 
-or 
+---
 
-```sql
-SELECT rental_date FROM rental 
-WHERE rental_date::date = '2005-05-24';
-```
 
-# Comments
 
-Comments in SQL files:
 
-```sql
-/* this is a comment; it can 
-span multiple lines */
 
-SELECT * FROM actor; /* this is also a comment */
 
--- this is a single line comment
-
-SELECT * from actor; -- another single line comment
-```

@@ -106,33 +106,7 @@ Tables are linked together with *keys* (relational model of data)
 
 ---
 
-# When to Use SQL/Relational Databases
-
----
-
-![good reason](https://imgs.xkcd.com/comics/algorithms.png)
-
----
-
-![bad reason](https://s-media-cache-ak0.pinimg.com/736x/8d/91/18/8d9118b4ffae7881453f34a645b66264--web-images-mauve.jpg)
-
----
-
-## When to Consider
-<hr>
-
-Current system is unmanageable
-
-A lot of duplicated information 
-
-Different types of *related* observations 
-
-Access or analyze a subset of observations
-
----
-
-## Other Factors
-<hr>
+## When are Databases Useful?
 
 Multiple people need access to the same, current data
 
@@ -142,16 +116,6 @@ Enforce constraints about data values, structure, and relationships
 
 Automatically maintain attributes of data like "last modified," "created date"
 
----
-
-## Maybe look elsewhere when
-<hr>
-
-Entire dataset is generated together
-
-Data is static and manageable size
-
-Data that would be in a table is used as a complete unit
 
 ---
 
@@ -171,21 +135,10 @@ Data that would be in a table is used as a complete unit
 
 ---
 
-## Relational data conventions
-<hr>
-
-**Primary keys** serve as ID to your primary data entities
-
-**Foreign keys** serve as ID in one table that identifies a row in another table (e.g. children -> parents)
-
-**Relationship tables** express many-to-many type relationships (e.g. Netflix account <-> movie data)
-
-
----
 
 ## Entity-relationship diagram example
 
-<img src="http://www.postgresqltutorial.com/wp-content/uploads/2013/05/PostgreSQL-Sample-Database.png" 
+<img src="http://www.postgresqltutorial.com/wp-content/uploads/2018/03/dvd-rental-sample-database-diagram.png" 
 width="500">
 
 

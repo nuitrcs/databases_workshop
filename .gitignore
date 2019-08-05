@@ -6,6 +6,15 @@ python/.ipynb_checkpoints/*
 
 .idea/
 
-handout.*
+handout*
 
 PostgreSQL-Cheat-Sheet.pdf
+
+datafiles/
+
+db_setup.txt
+
+*.tar
+
+netids.txt
+

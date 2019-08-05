@@ -38,12 +38,76 @@ SELECT count(actor_id) FROM
 ```
 
 
+## Exercise: Inner Joins
+
+Select `first_name`, `last_name`, `amount`, and `payment_date` by joining the customer and payment tables.  
+
+
+Select film\_id, category\_id, and name from joining the film\_category and category tables, only where the category\_id is less than 10.
+
+
+#### Solutions
+
+
+```sql
+SELECT first_name, last_name, amount, payment_date
+FROM customer c 
+INNER JOIN payment p
+ON c.customer_id=p.customer_id;
+```
+
+```sql
+SELECT film_id, c.category_id, name
+FROM film_category fc
+INNER JOIN category c
+ON fc.category_id = c.category_id
+WHERE c.category < 10;
+```
+
+TODO: check above
+
+
+
+## Exercise: Joining and Grouping: Customer Spending
+
+Get a list of the names of customers who have spent more than $150, along with their total spending.
+
+Who is the customer with the highest average payment amount?
+
+
+#### Solution
+
+```sql
+SELECT first_name, last_name, sum(amount)
+FROM customer c 
+INNER JOIN payment p
+ON c.customer_id=p.customer_id
+GROUP BY first_name, last_name
+HAVING sum(amount) > 150;
+```
+
+```sql
+SELECT c.customer_id, first_name, last_name, avg(amount)
+FROM customer c 
+INNER JOIN payment p
+ON c.customer_id=p.customer_id
+GROUP BY c.customer_id, first_name, last_name
+ORDER BY avg(amount) DESC 
+LIMIT 1;
+```
+
+
+
+
+
 
 ## Exercise: Joining Customers, Payments, and Staff
 
+
+
 Join the customer and payment tables together with an inner join; select customer id, name, amount, and date and order by customer id.  Then join the staff table to them as well to add the staff's name.  
 
-#### Solution
+#### Solutions
 
 ```sql
 SELECT
@@ -83,6 +147,16 @@ Create a list of addresses that includes the name of the city instead of an ID n
 
 #### Solution
 
+
+```sql
+SELECT address, address2, district, postal_code, city, country 
+FROM address
+INNER JOIN city ON address.city_id=city.city_id
+INNER JOIN country ON city.country_id = country.country_id;
+```
+
+or
+
 ```sql
 SELECT address, address2, district, postal_code, city, country 
 FROM address, city, country
@@ -93,7 +167,7 @@ AND city.country_id = country.country_id;
 
 
 
-## Exercise: Joining and Grouping
+## Exercise: Joining and Grouping: Films and Actors
 
 Repeating an exercise from Part 1, but adding in information from additional tables:  Which film (_by title_) has the most actors?  Which actor (_by name_) is in the most films?
 
@@ -101,6 +175,27 @@ Challenge: Which two actors have been in the most films together?  Hint: You can
 
 
 #### Solution
+
+
+```sql
+SELECT title, count(actor_id) 
+FROM film, film_actor
+WHERE film.film_id=film_actor.film_id
+GROUP BY title
+ORDER BY count(actor_id) DESC 
+LIMIT 1;
+```
+
+```sql
+SELECT first_name, last_name, count(film_id) 
+FROM actor, film_actor
+WHERE actor.actor_id=film_actor.actor_id
+GROUP BY first_name, last_name
+ORDER BY count(film_id) DESC 
+LIMIT 1;
+```
+
+** Alternative Syntax:**
 
 ```sql
 SELECT title, count(actor_id) 
@@ -124,9 +219,9 @@ Challenge:
 
 ```sql
 SELECT a.actor_id, b.actor_id, count(*)
-FROM film_actor a, film_actor b -- join the table to itself
-WHERE a.film_id=b.film_id -- on the film id
-      AND a.actor_id > b.actor_id -- avoid duplicates and matching to the same actor
+FROM film_actor a, film_actor b  -- join the table to itself
+WHERE a.film_id=b.film_id  -- on the film id
+      AND a.actor_id > b.actor_id  -- avoid duplicates and matching to the same actor
 GROUP BY a.actor_id, b.actor_id
 ORDER BY count(*) DESC 
 LIMIT 1;
@@ -138,43 +233,16 @@ Super Challenge:
 SELECT c.first_name, c.last_name, d.first_name, d.last_name, fcount
 FROM
 (SELECT a.actor_id AS a1, b.actor_id AS a2, count(*) AS fcount
-FROM film_actor a, film_actor b -- join the table to itself
-WHERE a.film_id=b.film_id -- on the film id
-      AND a.actor_id > b.actor_id -- avoid duplicates and matching to the same actor
-GROUP BY a.actor_id, b.actor_id) foo -- this is the query from above
+FROM film_actor a, film_actor b  -- join the table to itself
+WHERE a.film_id=b.film_id  -- on the film id
+      AND a.actor_id > b.actor_id  -- avoid duplicates and matching to the same actor
+GROUP BY a.actor_id, b.actor_id) foo  -- this is the query from above
 INNER JOIN actor c ON c.actor_id=a1
 INNER JOIN actor d ON d.actor_id=a2
 ORDER BY fcount DESC LIMIT 1;
 ```
 
 There are other ways to accomplish the above.
-
-
-## Exercise: Joining and Grouping 2
-
-Get a list of the names of customers who have spent more than $150, along with their total spending.
-
-Who is the customer with the highest average payment amount?
-
-
-#### Solution
-
-```sql
-SELECT first_name, last_name, sum(amount)
-FROM customer c INNER JOIN payment p
-ON c.customer_id=p.customer_id
-GROUP BY first_name, last_name
-HAVING sum(amount) > 150;
-```
-
-```sql
-SELECT c.customer_id, first_name, last_name, avg(amount)
-FROM customer c INNER JOIN payment p
-ON c.customer_id=p.customer_id
-GROUP BY c.customer_id, first_name, last_name
-ORDER BY avg(amount) DESC 
-LIMIT 1;
-```
 
 
 

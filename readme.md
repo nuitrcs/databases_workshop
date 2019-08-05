@@ -1,14 +1,42 @@
 # Databases
 
-This workshop uses PostgreSQL.  Much of the material applies generically to SQL and other relational database systems, but some of it is specific to PostgreSQL.
+There are four databases workshops that cover parts of the material in this repo.
 
-This workshop uses the database discussed in, and follows much of the content of, the [PostgreSQL Tutorial](http://www.postgresqltutorial.com/).
+The workshops use PostgreSQL.  Much of the material applies generically to SQL and other relational database systems, but some of it is specific to PostgreSQL.
 
-The workshop starts with the presentation below, then [SQL Part 1](sql/part1.md).
+Some of the workshops use the database discussed in, and follow much of the content of, the [PostgreSQL Tutorial](http://www.postgresqltutorial.com/), which makes use of the [Skalia database](https://www.jooq.org/sakila).
 
-## Presentation Materials
 
-[![GitPitch](https://gitpitch.com/assets/badge.svg)](https://gitpitch.com/nuitrcs/databases_workshop/)
+## Selecting and Joining Data
+
+[Intro presentation](https://gitpitch.com/nuitrcs/databases_workshop/)
+
+The workshop follows the files below, which have links to the exercises.
+
+[Part 1](sql/part1.md)
+
+[Part 2](sql/part2.md)
+
+
+
+## Exploring Data
+
+See [Exploring Data](sql/exploring.md) for materials and exercises.
+
+This workshop uses data files from the [nycflights13 R package](https://github.com/hadley/nycflights13) and open data from the city of Evanston.
+
+## Updating and Changing Data
+
+Uses materials from [Part 4](sql/part4.md), which are in the process of being updated/expanded.
+
+## Creating and Designing Databases
+
+[Part 3](sql/part3.md) materials are relevant, but materials for this workshop are currently being updated/expanded.  
+
+## R and Python
+
+The [R](/r) and [Python](/python) materials may also be of interest to those taking any of the above workshops.
+
 
 ## Note
 
@@ -22,21 +50,19 @@ See Section 1. Getting started with PostgreSQL, from the [PostgreSQL Tutorial](h
 
 While in-person workshop participants do not need to install PostgreSQL, you will need a terminal program capable of creating an SSH connection to a remote server.  On a Mac, the built-in Terminal program will work.  On Windows, we suggest [PuTTY](http://www.putty.org/) if you don't already have another program installed.
 
-Typing long commands in a terminal can be tedious.  We also recommend you install [DataGrip](https://www.jetbrains.com/datagrip/) for working with databases.  It has a free 30 day trial or you can apply for a JetBrains academic license for free.
+This repository also includes materials for connecting to a database using Python or R.  For Python, you will need to install the `psycopg2` package.  For R, you will need the package `RPostgres`.
 
-This repository also includes materials for connecting to a database using Python or R.  For Python, you will need to install the `psycopg2` package.  For R, you will need the package `RPostgreSQL`.
+# Resources
 
-## Resources
-
-### Background
+## Background
 
 [Basic Explanation of Relational Databases](http://www.bbc.co.uk/education/guides/ztsvb9q/revision/1): from the BBC, a quick explanation of relational databases
 
-### Software
+## Software
 
 [DataGrip Tutorial](https://www.youtube.com/watch?v=Xb9K8IAdZNg): video on how to use the DataGrip program; it even uses the same database we use in this workshop.
 
-### Reference
+## Reference
 
 [PostgreSQL cheat sheet](http://www.postgresqltutorial.com/wp-content/uploads/2018/03/PostgreSQL-Cheat-Sheet.pdf): a list of basic commands and patterns for statements
 
@@ -46,11 +72,11 @@ This repository also includes materials for connecting to a database using Pytho
 
 [psql commands cheat sheet](http://www.postgresonline.com/downloads/special_feature/postgresql83_psql_cheatsheet.pdf): describe commands, other slash commands
 
-### Additional Exercises/Tutorials
+## Additional Exercises/Tutorials
 
 _These resources use PostgreSQL or SQL generally._
 
-[Mode SQL Tutorials](https://mode.com/sql-tutorial/)
+[Mode SQL Tutorials](https://mode.com/sql-tutorial/): good introduction, and you can try running queries on their platform
 
 [PostgreSQL Exercises](https://pgexercises.com/): interactive, online exercises to practice SQL skills in a PostgreSQL environment.  
 
@@ -70,17 +96,4 @@ _These resources use PostgreSQL or SQL generally._
 
 [SQL for Data Analysis](https://www.udacity.com/course/sql-for-data-analysis--ud198#) from Udacity - an online self-paced course
 
-### SQLite
 
-The workshop uses the PostgreSQL database system, but if you're working on your own projects, [SQLite](https://www.sqlite.org/) may be a good option.  SQLite doesn't require running a server and it creates a database in a single, portable file locally on your computer.
-
-[Intro to SQL with SQLite](https://github.com/tthibo/SQL-Tutorial)
-
-[Software Carpentry Databases and SQL](http://swcarpentry.github.io/sql-novice-survey/): introductory workshop using SQLite
-
-[Databases with Python and Pandas](https://www.dataquest.io/blog/python-pandas-databases/): from Data Quest.  Examples of using a SQLite database with Python and pandas too.
-
-
-### Other
-
-[Programming for Biologists](http://www.programmingforbiologists.org/exercises/): includes a section on databases; it uses MS Access instead of PostgreSQL or SQLite, but many of the concepts should be the same.

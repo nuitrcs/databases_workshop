@@ -23,7 +23,20 @@ Select the row from customer for customer named Jamie Rice.
 
 Select amount and payment_date from payment where the amount paid was less than $1.  
 
+
+
+## Exercise: Distinct
+
 What are the different rental durations that the store allows?
+
+
+
+
+## Exercise: Order By
+
+What are the IDs of the last 3 customers to return a rental?
+
+
 
 ## Exercise: Counting
 
@@ -32,22 +45,12 @@ How many films are rated NC-17?  How many are rated PG or PG-13?
 
 Challenge: How many different customers have entries in the rental table?  [Hint](http://www.w3resource.com/sql/aggregate-functions/count-with-distinct.php)
 
-## Exercise: Order By
 
-What are the IDs of the last 3 customers to return a rental?
-
-
-## Exercise: Like
-
-Select film title that have "Dragon" in them.
-
-Challenge: only select titles that have just the word "Dragon" (not "Dragonfly") in them.
 
 ## Exercise: Group By
 
 Does the average replacement cost of a film differ by rating?
 
-Which store (`store_id`) has the most customers whose first name starts with M?
 
 Challenge: Are there any customers with the same last name? 
 

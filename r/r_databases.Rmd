@@ -269,7 +269,7 @@ R Markdown lets you execute SQL queries directly.  You first set up a `DBI` conn
 
 ````r
 `r ''````{r}
-library(RPostgreSQL)
+library(RPostgres)
 con <- dbConnect(RPostgres::Postgres(), host="localhost", dbname="dvdrental")
 ```
 ````

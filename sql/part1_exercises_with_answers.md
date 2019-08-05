@@ -42,7 +42,7 @@ Select the row from customer for customer named Jamie Rice.
 
 Select amount and payment_date from payment where the amount paid was less than $1.  
 
-What are the different rental durations that the store allows?
+
 
 #### Solution
 
@@ -75,9 +75,34 @@ WHERE amount < 1;
 ```
 
 
+## Exercise: Distinct
+
+What are the different rental durations that the store allows?
+
 ```sql
 SELECT DISTINCT rental_duration FROM film;
 ```
+
+
+
+
+
+## Exercise: Order By
+
+What are the IDs of the last 3 customers to return a rental?
+
+
+#### Solution
+
+```sql
+SELECT customer_id FROM rental 
+WHERE return_date IS NOT NULL -- without this, you get NULL values first
+ORDER BY return_date DESC 
+LIMIT 3;
+```
+
+
+
 
 
 ## Exercise: Counting
@@ -115,57 +140,12 @@ SELECT COUNT(DISTINCT customer_id) FROM rental;
 
 
 
-## Exercise: Order By
-
-What are the IDs of the last 3 customers to return a rental?
-
-
-#### Solution
-
-```sql
-SELECT customer_id FROM rental 
-WHERE return_date IS NOT NULL -- without this, you get NULL values first
-ORDER BY return_date DESC 
-LIMIT 3;
-```
-
-
-
-## Exercise: Like
-
-Select film title that have "Dragon" in them.
-
-Challenge: only select titles that have just the word "Dragon" (not "Dragonfly") in them.
-
-#### Solution
-
-```sql
-SELECT title FROM film 
-WHERE title like '%Dragon%';
-```
-
-Challenge:
-
-This solution only works because the titles are all two words, so we can just check the beginning or end of the title:
-
-```sql
-SELECT title FROM film 
-WHERE title like '% Dragon' 
-OR title like 'Dragon %';
-```
-
-For a more general purpose solution, you would need to use [regular expressions](https://www.postgresql.org/docs/current/static/functions-matching.html) to match word boundaries, but we're not going to cover that here.
-
-```sql
-SELECT title FROM film                                                                                         WHERE title ~ '.*\mDragon\M.*';
-```
 
 
 ## Exercise: Group By
 
 Does the average replacement cost of a film differ by rating?
 
-Which store (`store_id`) has the most customers whose first name starts with M?
 
 Challenge: Are there any customers with the same last name? 
 
@@ -174,11 +154,6 @@ Challenge: Are there any customers with the same last name?
 ```sql
 SELECT rating, avg(replacement_cost) FROM film
 GROUP BY rating;
-```
-
-```sql
-SELECT store_id, count(*) FROM customer
-WHERE first_name LIKE 'M%' GROUP BY store_id;
 ```
 
 Challenge:
