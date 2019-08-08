@@ -10,9 +10,9 @@ The basic syntax of creating a table is:
 
 ```sql
 CREATE TABLE table_name (
- column_name TYPE column_constraint,
- column_name TYPE column_constraint,
- column_name TYPE column_constraint,
+ column_name TYPE COLUMN_CONSTRAINT,
+ column_name TYPE COLUMN_CONSTRAINT,
+ column_name TYPE COLUMN_CONSTRAINT,
  CONSTRAINT table_constraint
 );
 ```
@@ -60,6 +60,7 @@ Indexes:
 
 You can see the primary key index that was made, and the student id sequence.
 
+Note that unless you're a superuser, others may not have permissions to your table.  Managing users and permissions is outside the scope of this workshop.
 
 ## Adding Values
 
@@ -73,6 +74,9 @@ VALUES ('Alice', 'Walker', 2017),
        ('Bob', 'Williams', 2016),
        ('Charlie', 'Weston', 2016);
 ```
+
+
+Each row goes in `()`, with each set of values separated by commas.  
 
 Let's check:
 
@@ -92,191 +96,52 @@ practice=# select * from student;
 
 The id column was generated for us, starting at 1.  
 
+Specifying the columns by name in the insert statement is optional.  We're doing it here because we're not inserting into every column - just 3 - and letting the ID be assigned automatically.  Specifying the columns by name also allows us specify what the order is.
+
+
+An alternative to above without specifying the column names:
+
+```sql
+INSERT INTO student 
+VALUES (DEFAULT, 'Alice', 'Walker', 2017),
+       (DEFAULT, 'Bob', 'Williams', 2016),
+       (DEFAULT, 'Charlie', 'Weston', 2016);
+```
+
+```sql
+SELECT * FROM student;
+```
+
+It inserted them in again!  That's because there wasn't anything in the table definition precluding duplicates on names.  We'll learn how to delete rows later.
+
+But, this demonstrates one reason you want a primary key -- without an ID column here, it would be very difficult to delete only one of each of the duplicates.  
+
 
 ### `copy`
 
-We can also [copy](https://www.postgresql.org/docs/current/static/sql-copy.html) data from a file.  The PostgreSQL copy command works in reference to the file system on the database server.  So if you aren't running the server on your local machine, you can't use copy.  With the `psql` client, the `\copy`, which uses the same syntax as `copy`, will transfer files between your local computer and the database server. 
+We can also [copy](https://www.postgresql.org/docs/current/static/sql-copy.html) data from a file.  The PostgreSQL copy command works in reference to the file system on the database server.  So if you aren't running the server on your local machine, you can't use copy.  With the `psql` client, the `\copy` command, which uses the same syntax as `copy`, will transfer files between your local computer and the database server. 
 
-Get the CSV file from: https://raw.githubusercontent.com/nuitrcs/databases_workshop/master/datafiles/studentdata.csv and save it somewhere you know the path to.
-
-In in-person workshops where we're using a remote server for `psql`, the file needs to be on that server.  Get it by opening another connection to the server and using
+Get the CSV file from: https://raw.githubusercontent.com/nuitrcs/databases_workshop/master/datafiles/studentdata.csv and save it somewhere you know the path to.  You can get it by opening another connection to the server and using
 
 ```
 curl https://raw.githubusercontent.com/nuitrcs/databases_workshop/master/datafiles/studentdata.csv > studentdata.csv
 ```
 
-Note that `\` commands like `\copy` in `psql` need to be all on one line without comments in them.
+In in-person workshops where we're using a remote server for `psql`, the file needs to be on that server. The file is in /tmp/studentdata.csv
+
+
+Note that `\` commands like `\copy` in `psql` need to be all on one line without comments or line breaks in them.
 
 ```sql
-\copy student (first_name, last_name, admission_year) FROM 'studentdata.csv' CSV HEADER
+\copy student (first_name, last_name, admission_year) FROM '/tmp/studentdata.csv' CSV HEADER
 ```
 
-
-### Import File
-
-Client programs like DataGrip may also have their own data import functions.  `\copy` is specific to the `psql` command line program.  In DataGrip, you can import data into a table by right clicking on the table name and choosing Import Data from File.  There is then a dialogue box where you can see what data will be imported and set the settings.
+Change the path as appropriate above to the data file on your system.
 
 
-# An Example
-
-We had a primary key constraint above, but there are other constraints.  The most important is foreign key, which links tables together.  But we can also enforce other constraints.
-
-## Database Design
-
-Let's work through an example of players and teams.  When we're designing our database, we want to avoid duplication as much as possible.
-
-First Name  | Last Name  | Height  | Weight  | TeamName  | TeamCity  | StartingYear  | EndingYear 
-:---|:---|---|---|:---|:---|---|---
-LeBron | James | 81 | 249 | Cavaliers | Cleveland | 2003 | 2010
-LeBron | James | 81 | 249 | Heat | Miami | 2010 | 2014
-LeBron | James | 81 | 249 | Cavaliers | Cleveland | 2014 | 2018
-LeBron | James | 81 | 249 | Lakers | Los Angeles | 2018 | 
-Tim | Duncan | 82 | 256 | Spurs | San Antonio | 1997 | 2016
-Chris | Paul | 72 | 175 | Hornets | New Orleans | 2005 | 2011
-Chris | Paul | 72 | 175 | Clippers | Los Angeles | 2011 | 2017
-Chris | Paul | 72 | 175 | Rockets | Houston | 2017 | 
+Client programs have their own data import functions.  `\copy` is specific to the `psql` command line program.  
 
 
-What tables could we make to hold this data?
-
-* player
-* team
-* player_team
-
-Player:
-
-id | first_name | last_name | height | weight
----|---|---|---|---
-1 | LeBron | James | 81 | 249
-2 | Tim | Duncan | 82 | 256 
-3 | Chris | Paul | 72 | 175
-
-
-Team:
-
-id | name | city 
----|---|---
-1 | Cavaliers | Cleveland
-2 | Heat | Miami
-3 | Spurs | San Antonio
-4 | Hornets | New Orleans
-5 | Clippers | Los Angeles
-6 | Rockets | Houston
-7 | Lakers | Los Angeles
-
-
-
-Player-Team:
-
-player_id | team_id | starting_year | ending_year
----|---|---|---
-1 | 1 | 2003 | 2010
-1 | 2 | 2010 | 2014
-1 | 1 | 2014 | 2018
-1 | 7 | 2018 | NULL
-2 | 3 | 1997 | 2016
-3 | 4 | 2005 | 2011
-3 | 5 | 2011 | 2017
-3 | 6 | 2017 | NULL
-
-
-(We've simplified above to use the year and not the full date; we'd want a full date in reality because players can leave and rejoin a team during a season.)
-
-## Table Creation
-
-First, player table.  Start with the data types.
-
-```sql
-CREATE TABLE player ( 
-	id INT,
-	first_name TEXT, 
-	last_name TEXT, 
-	height SMALLINT, 
-	weight SMALLINT
-);
-```
-
-We're making the player id an imt type because we are assigning our own ids.  You could use a serial to automatically assign ID numbers.  That wouldn't prevent us from supplying our own ids, but doing so wiould potentially conflict with the autogenerated sequence ([more info](https://stackoverflow.com/questions/244243/how-to-reset-postgres-primary-key-sequence-when-it-falls-out-of-sync)).  Since we have to link players to teams later, we'll need to know what both the player ID and team ID are before we do the linking.  So we make this column just an int instead and assign IDs ourselves.  The downside of that is keeping track of what ids have already been used.
-
-Add in constraints
-
-```sql
-CREATE TABLE player (
-	id int PRIMARY KEY,
-	first_name text NOT NULL,
-	last_name text NOT NULL,
-	height smallint CHECK (height > 0), 
-	weight smallint
-);
-```
-
-We use primary key like above, and also set the name columns to be not null.  We can also add in value constraints like ensuring that height is a positive number.
-
-Moving on to the team table:
-
-```sql
-CREATE TABLE team (
-	id smallint primary key, 
-	name text not null,
-	city text not null,
-	unique (name, city)
-);
-```
-
-For team, we added a constraint across two columns, saying that the combination of team name and city needs to be unique.
-
-For player-team, start with types:
-
-```sql
-CREATE TABLE player_team ( 
-	player_id int,
-	team_id smallint, 
-	start_year smallint, 
-	end_year smallint
-);
-```
-
-Add in constraints, a default value, and link ids to the other tables:
-
-```sql
-CREATE TABLE player_team (
-	player_id int REFERENCES player(id),
-	team_id smallint REFERENCES team(id), 
-	start_year smallint NOT NULL, 
-	end_year smallint DEFAULT NULL
-);
-```
-
-The id columns, REFERENCES establishes a foreign key that constrains the values of `player_id` to be values that exist in the player table, id column.  For `team_id`, it has to take on values in the team table, id column.
-
-An alternative format to specify the foreign keys is:
-
-```sql
-CREATE TABLE player_team (
-	player_id int,
-	team_id smallint, 
-	start_year smallint not null, 
-	end_year smallint default null,
-	FOREIGN KEY (player_id) REFERENCES player(id),
-	FOREIGN KEY (team_id) REFERENCES team(id)
-);
-```
-
-We also set the start year to not be null, but for the end year, it defaults to null (this is the default, but we're being explicit).
-
-Our player-team table is still missing a primary key.  We can't use player id and team id because players have left teams and later come back to them.  So we could use 3 columns: player id, team id, and start year (again, ignoring the possibility that a player leaves a team and rejoins in the same year):
-
-```sql
-CREATE TABLE player_team (
-	player_id int references player(id),
-	team_id smallint references team(id), 
-	start_year smallint not null, 
-	end_year smallint default null,
-	PRIMARY KEY (player_id, team_id, start_year)
-);
-```
-
-We could also just add an ID column to the table instead.  Having a primary key helps keep you from getting into a situation where you can't easily delete duplicate values from a table (or accidently introduce them in the first place).
 
 ## Temporary Tables
 
@@ -288,25 +153,63 @@ SELECT * FROM actor
 WHERE actor.first_name LIKE 'A%';
 ```
 
-When creating a table, you also have the option to make the table temporary -- it will be deleted when your database session ends.  This is often useful with tables created from select statements.
+```sql
+SELECT * FROM a_actors;
+```
+
+When creating a table, you also have the option to make the table temporary -- it will be deleted when your database session ends.  This is often useful with tables created from select statements, but it can be used with any table creation command.
 
 ```sql
-CREATE TEMP TABLE a_actors AS 
+CREATE TEMP TABLE b_actors AS 
 SELECT * FROM actor 
-WHERE actor.first_name LIKE 'A%';
+WHERE actor.first_name LIKE 'B%';
+```
+
+```sql
+SELECT * FROM b_actors;
 ```
 
 Temporary tables can be useful for creating intermediate tables (to help simplify or speed up complex queries) or result sets you may want to export or use later.
 
+Temporary tables are automatically deleted when your session ends.  Often users will have permissions to create temporary tables, but not permanent tables.  You become the owner of the table, and others will not have permission to view temporary tables by default:
+
+```sql
+\dt
+```
+
+Creating tables in this way copies all of the data.  The new table is independent from the table or tables it was created from.  
+
+# Views
+
+Instead of creating a new table (permanent or temporary), you can instead create a view (either permanent or temporary) that is essentially a saved query that you can reference as a table.  You can query the view like a table, but the data isn't copied -- it pulls the results from the original tables.  So if the original tables are updated, the results of the view will change.
+
+```sql
+CREATE TEMP VIEW actor_film_names AS 
+SELECT title, first_name, last_name
+FROM actor a
+INNER JOIN film_actor fa
+ON a.actor_id=fa.actor_id
+INNER JOIN film f
+ON f.film_id=fa.film_id;
+```
+
+```sql
+SELECT * FROM actor_film_names LIMIT 5;
+```
+
 # Exporting Data
 
-You can use [Copy](https://www.postgresql.org/docs/current/static/sql-copy.html) (or `\copy`) to export data too.  You have to specify an absolute file path.
+You can use [Copy](https://www.postgresql.org/docs/current/static/sql-copy.html) (or `\copy`) to export data too.  You have to specify an absolute file path when writing an output file.
 
 ```sql
 \copy student TO '/Users/username/documents/mystudents.csv' CSV HEADER
 ```
 
 You can copy tables by name or enter a query in \(\) in that place instead.
+
+```sql
+\copy (SELECT * FROM student LIMIT 5) TO '/Users/username/documents/mystudents5.csv' CSV HEADER
+```
 
 In `psql` there is also a `\o` command to open a file for writing (and then close it later):
 
@@ -316,5 +219,7 @@ SELECT * FROM actor;
 \o
 ```  
 
-In DataGrip, right-click on the table name, then Dump Data to File (and choose an option).  You can also export the results of a query using the buttons in the query result display window at the bottom.
+This just prints the output as it would be in the terminal to the file.  
+
+
 

@@ -27,11 +27,13 @@ This workshop uses data files from the [nycflights13 R package](https://github.c
 
 ## Updating and Changing Data
 
-Uses materials from [Part 4](sql/part4.md), which are in the process of being updated/expanded.
+[Part 3](sql/part3.md)
+
+[Part 4](sql/part4.md)
 
 ## Creating and Designing Databases
 
-[Part 3](sql/part3.md) materials are relevant, but materials for this workshop are currently being updated/expanded.  
+Materials are being updated. 
 
 ## R and Python
 
