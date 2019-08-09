@@ -23,8 +23,6 @@ R is generally better suited to selecting data from databases than for creating 
 
 The `DBI` package has the core functionality of connecting R to database servers.  There are then packages that implement the core functionality of `DBI` for each specific implementation of SQL.  A package for PostgreSQL is `RPostgres`. 
 
-*Note: this workshop previously used `RPostgreSQL` but the newer package `RPostgres` is more fully compliant with the `DBI` API.  If you're using `RPostgreSQL`, prepared queries won't work.  And you should replace `RPostgres::Postgres()` in the connection function with `dbDriver("PostgreSQL")`.*
-
 ```{r, eval=FALSE}
 if(!'RPostgres' %in% installed.packages()){
   install.packages("RPostgres")
@@ -232,6 +230,39 @@ rentaltbl %>%
 ```
 
 You can use `collect` to pull down all of the data (tell `dbplyr` to stop being lazy).
+
+```{r, echo=TRUE}
+# First, without collecting
+df1 <- rentaltbl %>% 
+  group_by(customer_id) %>% 
+  summarize(count=n()) 
+df1
+```
+
+Looks OK, except:
+
+```{r, eval=FALSE}
+df[1,]
+```
+
+Gives you:
+
+`Error in df[1, ] : object of type 'closure' is not subsettable`
+
+Which is a strange error, but it is telling us we need to collect the data.
+
+```{r, echo=TRUE}
+# Then with collecting
+df2 <- rentaltbl %>% 
+  group_by(customer_id) %>% 
+  summarize(count=n()) %>% 
+  collect()
+df2
+```
+
+```{r}
+df2[1,]
+```
 
 You can also use `dplyr`'s commands to join:
 
