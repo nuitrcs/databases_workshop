@@ -287,9 +287,9 @@ Hint: If you make a mistake, you might want to delete tables and start over.  Se
 
 ### Exercise: Design a Database
 
-Get the data from https://raw.githubusercontent.com/nuitrcs/databases_workshop/master/datafiles/allstudents.csv
+Get the data from `https://raw.githubusercontent.com/nuitrcs/databases_workshop/master/datafiles/allstudents.csv`
 
-(During the workshop, if connected to a remote server, the file is downloaded at /tmp/allstudents.csv already)
+(During the workshop, if connected to a remote server, the file is downloaded at `/tmp/allstudents.csv` already)
 
 Decide how to divide this data up into tables, create the tables, and import the data.
 
@@ -413,7 +413,7 @@ speech_id|chamber|date|number_within_file|speaker|first_name|last_name|state|gen
 1140000017|H|20150106|00017|Ms. PELOSI|Unknown|PELOSI|Unknown|F|001639|001822|01062015.txt|5780|1002
 1140000018|H|20150106|00018|Mr. BOEHNER|Unknown|BOEHNER|Unknown|M|001823|001956|01062015.txt|4148|765
 1140000019|H|20150106|00019|Mr. CONYERS|Unknown|CONYERS|Unknown|M|001957|001970|01062015.txt|491|86
-1140000020|H|20150106|00020|Mr. 
+...
 ```
 
 `hein-bound.zip` (don't download) has the same types of files as in `hein-daily.zip`.  They are from a slightly different version of the data source than the daily files.  We'll ignore these for this workshop, as they have similar structure to the files above.
