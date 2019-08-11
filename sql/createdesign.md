@@ -1,5 +1,13 @@
 # Creating and Designing Databases
 
+When do you want to use a database?
+
+* Want subsets of data or individual rows (not always entire dataset)
+* Updating or changing subsets or individual rows, or adding data incrementally over time
+* Need multiple people to have access to current data
+* You have a lot of rectangles of data with some relationships between them
+
+
 # Concepts
 
 ## Types of Tables
@@ -9,7 +17,7 @@ Let's look at the example `dvdrental` database http://www.postgresqltutorial.com
 There isn't really a standard classification of table types, but there are some common ones in practice.  Another person's take on this is at http://mark.random-article.com/musings/db-tables.html, and it aligns generally with what we have here, with some additional details.
 
 * Main Entity tables: think nouns: holding observations about units/things/cases -- entities -- of interest
-* Relationship tables: linking other tables together to define many-to-many relationships
+* Relationship tables: linking other tables together to define many-to-many relationships.  Note: One-to-many relationships can be captured through a foreign key column in the table that's the "many" in the one to many relationship: e.g. a city column in an address table.  Many addresses to one city, so the column linking these two is in the address table.
 * Allowed value table or lookup table: contain the set of values that a field (column) in another table can take on.  Lookup tables usually don't change (at least much) during the life of a database -- they're fairly static.
 * List table: Many to one tables that contain a set of acceptable values (like a lookup table) and maybe additional details about entities that can have many entities of another type associated with them.  Lookup tables usually have a fairly limited set of values, while these tables often have many more rows and are expected to grow over time.
 
@@ -17,7 +25,7 @@ There's another common type of table that isn't in the `dvdrental` database: an 
 
 An example might be ministers/secretaries for major departments in a national government -- the set varies from country to country.  You would have at least three columns: country id, ministry/title, and an ID or name of the person.  You could do this instead of having a column for each type of minister.
 
-A variation of this also comes up when you might have observations over time of a variable.  You might have the entity it's associated with, the data/time indicator, and a value.  For example, yearly GDP for countries.  You might have columns country id, year, and GDP value.  It's much easier to add entries to this over time that to change the structure of the table to keep adding new years over time.
+A variation of this also comes up when you might have observations over time of a variable.  You might have the entity it's associated with, the data/time indicator, and a value.  For example, yearly GDP for countries.  You might have columns country id, year, and GDP value.  It's much easier to add entries to this over time than to change the structure of the table to keep adding new years over time.
 
 ## Normalization
 
@@ -262,6 +270,9 @@ CREATE TABLE player_team (
 
 We could also just add an ID column to the table instead.  Having a primary key helps keep you from getting into a situation where you can't easily delete duplicate values from a table (or accidently introduce them in the first place).
 
+
+
+
 ### Exercise: Create and Populate Basketball Tables
 
 Using the example of a basketball team, create the tables and then populate them with the data.  Either write insert statements or create csv files and import them.
@@ -279,6 +290,147 @@ Decide how to divide this data up into tables, create the tables, and import the
 Some instructors are listed as TBD: decide how to handle this data.
 
 The active column is 1 for true and 0 for false. 
+
+# More Things to Know About
+
+## Indexes
+
+http://www.postgresqltutorial.com/postgresql-indexes/
+
+When we set a primary key on a table, the database creates an index for that column.  We see this if we describe the table with `\d` is psql.  
+
+We can also add additional indexes ourselves on columns.
+
+An index makes it much faster to retrieve rows from the table using the columns that are part of the index -- so if you'd frequently filter on a column, a column can be useful.
+
+But they also take up space, so there's a trade-off.  
+
+And they make inserting data slower.
+
+If we were to make an index on `player.last_name` from the basketball example:
+
+```sql
+CREATE INDEX idx_player_last_name 
+ON player(last_name);  -- tablename(column_name)
+```
+
+This uses the common naming convention for the index of `idx` then table name then column name, but this isn't required.  
+
+Or we create an index over multiple columns: 
+
+```sql
+CREATE INDEX idx_player_names 
+ON player(last_name, first_name);
+```
+
+The order here matters.  When just `last_name` is used in a where clause, the index is still useful.  But not if only `first_name` is used.  
+
+## Schemas
+
+http://www.postgresqltutorial.com/postgresql-schema/
+
+Schemas are collections of objects (tables, functions, indexes, sequences, etc.) in a database.  It's another prefix that may go on an object to identify it: `schema.table.column`.  
+
+Schemas are useful for: 
+
+1) organization
+2) giving different permissions to different users (although you can do this by table as well)
+
+
+
+
+## Functions
+
+We've used functions that are built into the database, but you can also write your own functions.  There's a language specific to postgres, but there are also ways to write functions in R, perl, and other languages directly in the database.  But the database admin has to enable this functionality, and the other language plug-ins can be a security risk.
+
+## Triggers
+
+http://www.postgresqltutorial.com/postgresql-triggers/
+
+Triggers run a specified function whenever a specific event, such as an insert, update, or delete, occurs.  They are useful for enforcing data constraints that you can't do with the other constraints we discussed.  
+
+They can be used to log changes to one table in another (who made a change and when).
+
+
+## Slow Bulk Inserts
+
+Table constraints, from primary keys to foreign keys to check constraints, can make inserting data into a database much slower because more work has to be done to verify that the values are allowed.  (Under some cases, such as with foreign keys, deleting data can also be slower.)  This isn't a huge issue if you're inserting a few rows at a time.  But if you're importing a lot of data, it can be useful to strip a table of its constraints and then add them back in later.  But then you need to assume responsibility for data integrity.  There's no command to do this easily in PostgreSQL.  
+
+The same applies to triggers, but there is a way to disable and enable triggers:
+
+```sql
+ALTER TABLE tbl_name DISABLE TRIGGER ALL;
+-- do something here 	
+ALTER TABLE tbl_name ENABLE TRIGGER ALL;
+```
+
+## Views
+
+Views can make your life easier by making queries simpler.  If there are common joins, having a view to reference instead can be useful.
+
+
+
+# Another Example
+
+We'll work through this together.  Below are some notes to guide discussion.
+
+We're going to use data from https://data.stanford.edu/congress\_text which is made available under the ODC Attribution License. [Codebook](https://stacks.stanford.edu/file/druid:md374tz9962/codebook_v2.pdf)
+
+This is data on speeches made in congress -- from the official congressional record.  They have processed the data to have word and phrase (bigram) counts as well.  There's some metadata about the speeches and the speakers too. 
+
+Some of these are really big files, so we're going to talk about what's in them.  The zip files that don't start with "hein" are small and OK to download.  
+
+`phrase_clusters.zip` has three files that link terms to topics - both good terms and bad matches to exclude
+
+`vocabulary.zip` has three files that define phrases used in the analysis.
+
+`speakermap_stats.zip` has two files that appear to be statistics about the quality of the data processing - probably not relevant here.
+
+`audit.zip` has data on the data processing - shouldn't be needed in a database for analysis
+
+`hein-daily.zip` (don't download) has: files for speeches (just an ID column and a text column), descriptions (see below), bigram counts by speaker and party, speakermap files that link the speech to the speaker with info about the speaker (see [114_SpeakerMap.txt](../data/114_SpeakerMap.txt)). 
+
+description files, which contain details on the raw extractions of metadata about the speeches:
+
+```
+speech_id|chamber|date|number_within_file|speaker|first_name|last_name|state|gender|line_start|line_end|file|char_count|word_count
+1140000001|None|20150106|00001|The BECERRA|Unknown|BECERRA|Unknown|M|000918|000958|01062015.txt|1358|244
+1140000010|H|20150106|00010|The CLERK|Unknown|Unknown|Unknown|Special|000959|000966|01062015.txt|236|36
+1140000011|H|20150106|00011|Mr. MASSIE|Unknown|MASSIE|Unknown|M|000967|000973|01062015.txt|245|41
+1140000012|H|20150106|00012|The CLERK|Unknown|Unknown|Unknown|Special|000974|000975|01062015.txt|30|4
+1140000013|H|20150106|00013|Mr. BRIDENSTINE|Unknown|BRIDENSTINE|Unknown|M|000976|001006|01062015.txt|1013|183
+1140000014|H|20150106|00014|The CLERK|Unknown|Unknown|Unknown|Special|001007|001009|01062015.txt|30|4
+1140000015|H|20150106|00015|Mr. KING of Iowa|Unknown|KING|Iowa|M|001010|001027|01062015.txt|559|92
+1140000016|H|20150106|00016|The CLERK|Unknown|Unknown|Unknown|Special|001028|001046|01062015.txt|603|88
+1140000017|H|20150106|00017|Ms. PELOSI|Unknown|PELOSI|Unknown|F|001639|001822|01062015.txt|5780|1002
+1140000018|H|20150106|00018|Mr. BOEHNER|Unknown|BOEHNER|Unknown|M|001823|001956|01062015.txt|4148|765
+1140000019|H|20150106|00019|Mr. CONYERS|Unknown|CONYERS|Unknown|M|001957|001970|01062015.txt|491|86
+1140000020|H|20150106|00020|Mr. 
+```
+
+`hein-bound.zip` (don't download) has:
+
+
+
+Where do we start?
+
+What are our main units of observation?  Our entity tables?  From the description, we should be looking at something related to speeches and something related to speakers.  Where does this data exist in the data files?  What uniquely identifies a speaker?
+
+What is the relationship between speeches and speakers?  One to many?  Many to many?
+
+What other data do we want to keep?  The aggregate counts?  The topical mappings?  Will we be doing our own counts, or using their bigrams?
+
+What other data would we like to add into the database to make things easier?
+
+How will we be searching the text (and how often)?  You can do full text index for searching within postgres, but the search syntax is a bit strange.  
+
+From a practical standpoint, how would we put this all together?  You'd want to use R or Python to do some of the data manipulation and extraction, and then to put the data in the database (or write CSV files that correspond to table for import).
+
+What can we do:
+
+* Write a table definition for speaker
+* Write a table definition for speech
+* What are some of the lookup tables we might use?
 
 
 # Resources

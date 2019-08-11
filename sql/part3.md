@@ -143,6 +143,8 @@ Client programs have their own data import functions.  `\copy` is specific to th
 
 
 
+
+
 ## Temporary Tables
 
 You can create tables from result sets as well:
