@@ -41,9 +41,9 @@ Add in the data using insert statements.
 
 ```sql
 INSERT INTO player -- don't need to specify columns if using all in order
-VALUES (default , 'LeBron', 'James',  81,  249), -- default indicates to assign the value
-(default , 'Tim', 'Duncan',  82,  256),
-(default , 'Chris', 'Paul',  72,  175);
+VALUES (default, 'LeBron', 'James', 81, 249), -- default indicates to assign the value
+(default, 'Tim', 'Duncan', 82, 256),
+(default, 'Chris', 'Paul', 72, 175);
 
 -- with the approach below, default is implied for the ID column
 INSERT INTO team (name, city)
@@ -53,18 +53,20 @@ VALUES ('Cavaliers', 'Cleveland'),
 ('Hornets', 'New Orleans'),
 ('Clippers', 'Los Angeles'),
 ('Rockets', 'Houston'),
-('Lakers', 'Los Angeles'));
+('Lakers', 'Los Angeles'),
+('Oklahoma City', 'Thunder');
 
 -- check the ID values below before inserting
 INSERT INTO player_team 
-VALUES (1 ,  1 ,  2003 ,  2010),
-(1 ,  2 ,  2010 ,  2014),
-(1 ,  1 ,  2014 ,  2018),
-(1 ,  7 ,  2018 ,  NULL),
-(2 ,  3 ,  1997 ,  2016),
-(3 ,  4 ,  2005 ,  2011),
-(3 ,  5 ,  2011 ,  2017),
-(3 ,  6 ,  2017 ,  NULL);
+VALUES (1, 1, 2003, 2010),
+(1, 2, 2010, 2014),
+(1, 1, 2014, 2018),
+(1, 7, 2018, NULL),
+(2, 3, 1997, 2016),
+(3, 4, 2005, 2011),
+(3, 5, 2011, 2017),
+(3, 6, 2017, 2019),
+(3, 8, 2019, NULL);
 ```
 
 

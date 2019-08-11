@@ -155,6 +155,7 @@ id | name | city
 5 | Clippers | Los Angeles
 6 | Rockets | Houston
 7 | Lakers | Los Angeles
+8 | Oklahoma City | Thunder
 
 
 
@@ -169,7 +170,8 @@ player_id | team_id | starting_year | ending_year
 2 | 3 | 1997 | 2016
 3 | 4 | 2005 | 2011
 3 | 5 | 2011 | 2017
-3 | 6 | 2017 | NULL
+3 | 6 | 2017 | 2019
+3 | 8 | 2019 | NULL
 
 
 (We've simplified above to use the year and not the full date; we'd want a full date in reality because players can leave and rejoin a team during a season.)
