@@ -36,7 +36,7 @@ First normal form is a property of relations in relational databases -- meaning 
 * The order of the rows or columns does not matter.
 * One value per "cell" in a table (each column in a row)
 
-There is also second and third normal forms that specify additional conditions on how data should be organized.  See more here: https://www.1keydata.com/database-normalization/ 
+There is also second and third normal forms (and more after that) that specify additional conditions on how data should be organized.  The resources at the end of the page link to more information.  
 
 
 
@@ -285,6 +285,8 @@ Hint: If you make a mistake, you might want to delete tables and start over.  Se
 
 Get the data from https://raw.githubusercontent.com/nuitrcs/databases_workshop/master/datafiles/allstudents.csv
 
+(During the workshop, if connected to a remote server, the file is downloaded at /tmp/allstudents.csv already)
+
 Decide how to divide this data up into tables, create the tables, and import the data.
 
 Some instructors are listed as TBD: decide how to handle this data.
@@ -386,9 +388,9 @@ Some of these are really big files, so we're going to talk about what's in them.
 
 `speakermap_stats.zip` has two files that appear to be statistics about the quality of the data processing - probably not relevant here.
 
-`audit.zip` has data on the data processing - shouldn't be needed in a database for analysis
+`audit.zip` (don't need to download) has data on the data processing - shouldn't be needed in a database for analysis
 
-`hein-daily.zip` (don't download) has: files for speeches (just an ID column and a text column), descriptions (see below), bigram counts by speaker and party, speakermap files that link the speech to the speaker with info about the speaker (see [114_SpeakerMap.txt](../data/114_SpeakerMap.txt)). 
+`hein-daily.zip` (don't download) has files for: speeches (just an ID column and a text column: speech\_id, speech), descriptions (see below), bigram counts by speaker and party (speakerid, phrase, count OR party (R, D, or I), phrase, count), speakermap files that link the speech to the speaker with info about the speaker (see [114_SpeakerMap.txt](../data/114_SpeakerMap.txt)). 
 
 description files, which contain details on the raw extractions of metadata about the speeches:
 
@@ -408,8 +410,7 @@ speech_id|chamber|date|number_within_file|speaker|first_name|last_name|state|gen
 1140000020|H|20150106|00020|Mr. 
 ```
 
-`hein-bound.zip` (don't download) has:
-
+`hein-bound.zip` (don't download) has the same types of files as in `hein-daily.zip`.  They are from a slightly different version of the data source than the daily files.  We'll ignore these for this workshop, as they have similar structure to the files above.
 
 
 Where do we start?
@@ -431,9 +432,22 @@ What can we do:
 * Write a table definition for speaker
 * Write a table definition for speech
 * What are some of the lookup tables we might use?
-
+* Do we need some metadata/detail tables?
+* Term and topic tables - write definitions
 
 # Resources
+
+Some additional links for database design.
+
+## Normalization and overall design advice
+
+https://support.office.com/en-us/article/database-design-basics-eb2159cf-1e30-401a-8084-bd4f9c9ca1f5
+
+https://www.1keydata.com/database-normalization/ 
+
+https://www.guru99.com/database-normalization.html
+
+## Common mistakes
 
 https://www.red-gate.com/simple-talk/sql/database-administration/five-simple-database-design-errors-you-should-avoid/
 
