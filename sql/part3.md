@@ -10,10 +10,10 @@ The basic syntax of creating a table is:
 
 ```sql
 CREATE TABLE table_name (
- column_name TYPE COLUMN_CONSTRAINT,
- column_name TYPE COLUMN_CONSTRAINT,
- column_name TYPE COLUMN_CONSTRAINT,
- CONSTRAINT table_constraint
+   column_name TYPE COLUMN_CONSTRAINT,
+   column_name TYPE COLUMN_CONSTRAINT,
+   column_name TYPE COLUMN_CONSTRAINT,
+   CONSTRAINT table_constraint
 );
 ```
 
@@ -23,10 +23,10 @@ Let's start with a concrete example.  We'll make a table for students.
 
 ```sql
 CREATE TABLE student (
-	id serial PRIMARY KEY,
-	first_name text,
-	last_name text,
-	admission_year smallint 
+    id serial PRIMARY KEY,
+    first_name text,
+    last_name text,
+    admission_year smallint 
 );
 ```
 

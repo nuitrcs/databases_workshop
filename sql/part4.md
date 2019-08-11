@@ -217,6 +217,8 @@ VALUES
 	('rice', 'carbohydrate');
 ``` 
 
+[Answers](part4_exercises_with_answers.md)
+
 # Changing and Deleting Rows in a Table
 
 ## Update
@@ -291,6 +293,7 @@ WHERE id=4;
 
 Using the food table created and altered above, set the values of the `primary_color` column (try to set the value for a few rows together with one query).  Then set the values of the `favorite` column based on your favorites.
 
+[Answers](part4_exercises_with_answers.md)
 
 ## Update with Join
 
@@ -412,7 +415,7 @@ Set the value of `last_taught` in `course` to the most recent date the course wa
 
 Hint: you'll need to join to a subquery (the results of another query).  Think first about how to get the most recent date for each course, and then how to use that information in the update.  Alternatively, create a temporary table with the results of the query, then write an update statement using the temporary table.
 
-
+[Answers](part4_exercises_with_answers.md)
 
 ## Delete
 
@@ -449,6 +452,6 @@ WHERE segment_id IN
 
 Using the `food` table created, altered, and updated above, delete any white foods that aren't a favorite.
 
-Using the `course` table created above, delete any courses that were last offered before 2017.
+Using the `course` table created above, delete any courses that were last offered before 2017 (start date before 2017).  Note that you'll also need to delete entries from course\offering table too.  Be careful not to delete old offerings of courses you aren't deleting.
 
-
+[Answers](part4_exercises_with_answers.md)

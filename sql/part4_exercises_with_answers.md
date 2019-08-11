@@ -91,27 +91,15 @@ WHERE id IN (2, 8);
 
 
 
-## Exercise: Delete
 
-Using the table created, altered, and updated above, delete any white foods that aren't a favorite.
+## Exercise: Update with Join
 
-
-#### Solution
-
-```sql
-DELETE FROM food WHERE primary_color='white' AND NOT favorite;
-```
-
-
-## Challenging Exercise: Update with Join
-
-Read about [updating via a join](http://www.postgresqltutorial.com/postgresql-update-join/) (or [official documentation](https://www.postgresql.org/docs/9.6/static/sql-update.html)).
 
 Create and populate tables using the supplied code below.
 
-Then set the value of `last_taught` in `course` to the most recent date the course was taught using the `course_offering` table.
+Set the value of `last_taught` in `course` to the most recent date the course was taught using the `course_offering` table.
 
-Hint: you'll need to join to a subquery (the results of another query).  Think first about how to get the most recent date for each course, and then how to use that information in the update.
+Hint: you'll need to join to a subquery (the results of another query).  Think first about how to get the most recent date for each course, and then how to use that information in the update.  Alternatively, create a temporary table with the results of the query, then write an update statement using the temporary table.
 
 ```sql
 CREATE TABLE course (
@@ -121,8 +109,7 @@ CREATE TABLE course (
 );
 
 INSERT INTO course (id, name) 
-VALUES 
-	(1, 'Chemistry'),
+VALUES (1, 'Chemistry'),
 	(2, 'Physics'),
 	(3, 'History'),
 	(4, 'English'),
@@ -136,8 +123,7 @@ CREATE TABLE course_offering (
 );
 
 INSERT INTO course_offering 
-VALUES 
-	(1, 'Spring 2015', '2015-03-01'),
+VALUES (1, 'Spring 2015', '2015-03-01'),
 	(1, 'Spring 2017', '2017-03-01'),
 	(2, 'Fall 2016', '2016-09-01'),
 	(2, 'Spring 2017', '2017-03-01'),
@@ -158,5 +144,36 @@ FROM (SELECT course_id, max(date) AS maxdate
 		GROUP BY course_id) foo
 WHERE 
 	id=course_id;
+```
+
+
+## Exercise: Delete
+
+Using the table created, altered, and updated above, delete any white foods that aren't a favorite.
+
+Using the `course` table created above, delete any courses that were last offered before 2017 (start date before 2017).  Note that you'll also need to delete entries from course\_offering table too.  Be careful not to delete old offerings of courses you aren't deleting.
+
+
+#### Solutions
+
+```sql
+DELETE FROM food 
+WHERE primary_color='white' 
+AND NOT favorite;
+```
+
+One option (you could also do this with USING):
+
+```sql
+DELETE FROM course_offering
+WHERE course_id NOT IN 
+ (SELECT course_id 
+  FROM course_offering
+  WHERE date >= '2017-01-01');
+
+DELETE FROM course
+WHERE id NOT IN
+ (SELECT course_id 
+  FROM course_offering);
 ```
 

@@ -281,6 +281,8 @@ Need to see how to insert data?  Take a look at [Part 3](part3.md).
 
 Hint: If you make a mistake, you might want to delete tables and start over.  See [Part 4](part4.md) to remember how.
 
+[Answers](create_exercises_answers.md)
+
 ### Exercise: Design a Database
 
 Get the data from https://raw.githubusercontent.com/nuitrcs/databases_workshop/master/datafiles/allstudents.csv
@@ -292,6 +294,8 @@ Decide how to divide this data up into tables, create the tables, and import the
 Some instructors are listed as TBD: decide how to handle this data.
 
 The active column is 1 for true and 0 for false. 
+
+[Answers](create_exercises_answers.md)
 
 # More Things to Know About
 

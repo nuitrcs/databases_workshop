@@ -1,4 +1,4 @@
-# SQL Part 3: Exercises
+# Create Design Exercises
 ----
 
 There may be other ways to achieve the same result.  Remember that SQL commands are not case sensitive (but data values are).

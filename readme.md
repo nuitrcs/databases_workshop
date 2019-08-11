@@ -33,7 +33,7 @@ This workshop uses data files from the [nycflights13 R package](https://github.c
 
 ## Creating and Designing Databases
 
-[Creating and Designing Materials](createdesign.md)
+[Creating and Designing Materials](sql/createdesign.md)
 
 ## R and Python
 
