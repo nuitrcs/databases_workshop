@@ -11,7 +11,7 @@
 
 <meta name="author" content="Christina Maimone" />
 
-<meta name="date" content="2019-08-09" />
+<meta name="date" content="2019-08-12" />
 
 <title>R: Working with Databases</title>
 
@@ -377,7 +377,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">R: Working with Databases</h1>
 <h4 class="author">Christina Maimone</h4>
-<h4 class="date">2019-08-09</h4>
+<h4 class="date">2019-08-12</h4>
 
 </div>
 
@@ -389,8 +389,8 @@ $(document).ready(function () {
 <li><a href="#get-database-information">Get Database Information</a></li>
 <li><a href="#execute-queries">Execute Queries</a></li>
 <li><a href="#modifying-a-database">Modifying a Database</a></li>
-<li><a href="#close-connection">Close Connection</a></li>
 <li><a href="#transactions">Transactions</a></li>
+<li><a href="#close-connection">Close Connection</a></li>
 </ul></li>
 <li><a href="#use-dplyr">Use <code>dplyr</code></a></li>
 <li><a href="#r-markdown">R Markdown</a></li>
@@ -410,7 +410,7 @@ $(document).ready(function () {
 }</code></pre>
 <pre class="r"><code>library(RPostgres)</code></pre>
 <p>We connect with a function call like the following.</p>
-<p>Note: this code was generated on my local machine connected to a local copy of the database.</p>
+<p>Note: this code was generated on my local machine connected to a local copy of the database. Your connection details will be different. Note I also have permissions to modify this database.</p>
 <pre class="r"><code>con &lt;- dbConnect(RPostgres::Postgres(), host=&quot;localhost&quot;, dbname=&quot;dvdrental&quot;)</code></pre>
 <p>We will need a connection like this for any of the methods of connecting below. You can have multiple connection objects to different databases – just call the variables something different.</p>
 <p>Note that the above example doesn’t have a username or password because the database is local and doesn’t require one. If you’re using a remote database, you don’t want to hard core your credentials into your code. There are ways to set environment variables or, for PostgreSQL specifically, use a .pgpass file to store this information. But RStudio also gives you the option to pop up a box to enter the information:</p>
@@ -457,20 +457,20 @@ head(actor_subset)</code></pre>
 <p>If we want an entire table, there’s a function for that:</p>
 <pre class="r"><code>actor &lt;- dbReadTable(con, &quot;actor&quot;)
 head(actor)</code></pre>
-<pre><code>##   actor_id first_name    last_name         last_update
-## 1        1   Penelope      Guiness 2013-05-26 14:47:57
-## 2        2       Nick     Wahlberg 2013-05-26 14:47:57
-## 3        3         Ed        Chase 2013-05-26 14:47:57
-## 4        4   Jennifer        Davis 2013-05-26 14:47:57
-## 5        5     Johnny Lollobrigida 2013-05-26 14:47:57
-## 6        6      Bette    Nicholson 2013-05-26 14:47:57</code></pre>
+<pre><code>##   actor_id first_name last_name         last_update
+## 1        1   Penelope   Guiness 2013-05-26 14:47:57
+## 2        2       Nick  Wahlberg 2013-05-26 14:47:57
+## 3        3         Ed     Chase 2013-05-26 14:47:57
+## 4        6      Bette Nicholson 2013-05-26 14:47:57
+## 5        7      Grace    Mostel 2013-05-26 14:47:57
+## 6        8    Matthew Johansson 2013-05-26 14:47:57</code></pre>
 <p>If you want part of your query to be determined by a variable – especially if it’s a variable supplied or defined as input or by a user (not you) – you should guard against SQL injection (someone trying to attack your database by tricking your code into running malicious SQL statements) by using a parameterized query:</p>
 <pre class="r"><code># YES
 myquery &lt;- dbSendQuery(con, &quot;select * from actor where actor_id = $1&quot;)
-dbBind(myquery, list(5))
+dbBind(myquery, list(4))
 dbFetch(myquery)</code></pre>
-<pre><code>##   actor_id first_name    last_name         last_update
-## 1        5     Johnny Lollobrigida 2013-05-26 14:47:57</code></pre>
+<pre><code>##   actor_id first_name last_name         last_update
+## 1        4       Jenn     Davis 2019-08-12 19:24:02</code></pre>
 <p>The <code>$1</code> stands in for a value you’ll substitute in. For multiple, you can use <code>$2</code>, etc. (The <code>$1</code> notation is for PostgreSQL – other types of databases use <code>?</code> or other symbols.)</p>
 <p>When you’re done with the results from a prepared query, clear the result:</p>
 <pre class="r"><code>dbClearResult(myquery)</code></pre>
@@ -485,7 +485,10 @@ dbSendQuery(con, paste0(&quot;select * from actor where actor_id=&quot;, myvar))
 <div id="modifying-a-database" class="section level2">
 <h2>Modifying a Database</h2>
 <p>If you’re not a superuser on the <code>dvdrental</code> database, just try connecting to a database you can modify. Then the basic function is <code>dbSendQuery</code> for any command you want to execute where you aren’t retrieving results.</p>
-<pre class="r"><code>dbSendQuery(con, statement=&quot;update actor set actor_id=5000 where actor_id=5&quot;)</code></pre>
+<p>Note that by default, statements take effect immediately - they are not in a transaction that you need to commit. To use transactions, see below.</p>
+<pre class="r"><code>res &lt;- dbSendQuery(con, statement=&quot;update actor set first_name='Jenn' where actor_id=4&quot;)
+print(res)  # contains info on result of update
+dbClearResult(res)  # prevent warning messages</code></pre>
 <p>To create a table, you can give it a data frame</p>
 <pre class="r"><code>mytbl &lt;-data.frame(number=1:10 , letter=LETTERS[1:10])
 dbWriteTable(con, &quot;mynewtable&quot;, mytbl)</code></pre>
@@ -493,26 +496,34 @@ dbWriteTable(con, &quot;mynewtable&quot;, mytbl)</code></pre>
 <p>To remove a table</p>
 <pre class="r"><code>dbRemoveTable(con, &quot;mynewtable&quot;)</code></pre>
 </div>
+<div id="transactions" class="section level2">
+<h2>Transactions</h2>
+<p>There are also methods for managing transactions if you need: <code>dbBegin</code>, <code>dbRollback</code>, <code>dbCommit</code>. Transactions are key for when you need to be sure that a sequence of SQL commands (e.g. <code>UPDATE</code>, <code>CREATE</code>, <code>DROP</code>, <code>DELETE</code>, etc.) execute correctly before they’re made permanent (i.e. “committed”).</p>
+<pre class="r"><code>dbBegin(con)
+dbWriteTable(con, &quot;mynewtable&quot;, mytbl)
+dbRollback(con)
+dbGetQuery(con, &quot;SELECT * FROM mynewtable&quot;)</code></pre>
+<p>The above will produce error:</p>
+<pre><code>Error in result_create(conn@ptr, statement) : 
+  Failed to prepare query: ERROR:  relation &quot;mynewtable&quot; does not exist
+LINE 1: SELECT * FROM mynewtable</code></pre>
+<p>because the transaction was rolled back, not committed.</p>
+</div>
 <div id="close-connection" class="section level2">
 <h2>Close Connection</h2>
 <p>Connections will get closed when you quit R, but it’s good practice to explicitly close them.</p>
 <pre class="r"><code>dbDisconnect(con)</code></pre>
 </div>
-<div id="transactions" class="section level2">
-<h2>Transactions</h2>
-<p>There are also methods for managing transactions if you need: <code>dbBegin</code>, <code>dbRollback</code>, <code>dbCommit</code>. Transactions are key for when you need to be sure that a sequence of SQL commands (e.g. <code>UPDATE</code>, <code>CREATE</code>, <code>DROP</code>, <code>DELETE</code>, etc.) execute correctly before they’re made permanent (i.e. “committed”).</p>
-</div>
 </div>
 <div id="use-dplyr" class="section level1">
 <h1>Use <code>dplyr</code></h1>
 <p>For more complete info, see the <a href="http://db.rstudio.com/dplyr/">RStudio databases site</a>.</p>
-<pre class="r"><code>needToInstall &lt;- c(&quot;dbplyr&quot;, &quot;tidyverse&quot;)
+<pre class="r"><code>needToInstall &lt;- c(&quot;tidyverse&quot;)
 needToInstall &lt;- needToInstall[which(!needToInstall %in% installed.packages())]
 if(length(needToInstall) &gt; 0){
   sapply(needToInstall, install.packages)
 }</code></pre>
-<pre class="r"><code>library(tidyverse)
-library(dbplyr)</code></pre>
+<pre class="r"><code>library(tidyverse)</code></pre>
 <p>First, connect like normal</p>
 <pre class="r"><code>con &lt;- dbConnect(RPostgres::Postgres(), host=&quot;localhost&quot;, dbname=&quot;dvdrental&quot;)</code></pre>
 <p>Get a reference to a table:</p>
@@ -534,23 +545,23 @@ library(dbplyr)</code></pre>
 ##   ..$ vars: chr [1:4] &quot;actor_id&quot; &quot;first_name&quot; &quot;last_name&quot; &quot;last_update&quot;
 ##   ..- attr(*, &quot;class&quot;)= chr [1:3] &quot;op_base_remote&quot; &quot;op_base&quot; &quot;op&quot;
 ##  - attr(*, &quot;class&quot;)= chr [1:5] &quot;tbl_PqConnection&quot; &quot;tbl_dbi&quot; &quot;tbl_sql&quot; &quot;tbl_lazy&quot; ...</code></pre>
-<p>It just has connection information. <code>dbplyr</code> will try to perform operations within the database where it can, instead of pulling all of the data into R.</p>
+<p>It just has connection information. <code>dplyr</code> will try to perform operations within the database where it can, instead of pulling all of the data into R.</p>
 <p>Yet you can print the object and see observations:</p>
 <pre class="r"><code>actortbl</code></pre>
 <pre><code>## # Source:   table&lt;actor&gt; [?? x 4]
 ## # Database: postgres [christina@localhost:5432/dvdrental]
-##    actor_id first_name last_name    last_update        
-##       &lt;int&gt; &lt;chr&gt;      &lt;chr&gt;        &lt;dttm&gt;             
-##  1        1 Penelope   Guiness      2013-05-26 14:47:57
-##  2        2 Nick       Wahlberg     2013-05-26 14:47:57
-##  3        3 Ed         Chase        2013-05-26 14:47:57
-##  4        4 Jennifer   Davis        2013-05-26 14:47:57
-##  5        5 Johnny     Lollobrigida 2013-05-26 14:47:57
-##  6        6 Bette      Nicholson    2013-05-26 14:47:57
-##  7        7 Grace      Mostel       2013-05-26 14:47:57
-##  8        8 Matthew    Johansson    2013-05-26 14:47:57
-##  9        9 Joe        Swank        2013-05-26 14:47:57
-## 10       10 Christian  Gable        2013-05-26 14:47:57
+##    actor_id first_name last_name last_update        
+##       &lt;int&gt; &lt;chr&gt;      &lt;chr&gt;     &lt;dttm&gt;             
+##  1        1 Penelope   Guiness   2013-05-26 14:47:57
+##  2        2 Nick       Wahlberg  2013-05-26 14:47:57
+##  3        3 Ed         Chase     2013-05-26 14:47:57
+##  4        6 Bette      Nicholson 2013-05-26 14:47:57
+##  5        7 Grace      Mostel    2013-05-26 14:47:57
+##  6        8 Matthew    Johansson 2013-05-26 14:47:57
+##  7        9 Joe        Swank     2013-05-26 14:47:57
+##  8       10 Christian  Gable     2013-05-26 14:47:57
+##  9       11 Zero       Cage      2013-05-26 14:47:57
+## 10       12 Karl       Berry     2013-05-26 14:47:57
 ## # … with more rows</code></pre>
 <p>It retrieves them as needed, and also gives you a nice display in notebooks (a special kind of RMarkdown file) – output looks a litle different in the console and in RMarkdown files like this.</p>
 <p>You can use <code>dplyr</code> verbs to work with the table objects from the database, as if they were data frames (or tibbles).</p>
@@ -601,7 +612,7 @@ rentaltbl %&gt;%
 ## SELECT &quot;customer_id&quot;, COUNT(*) AS &quot;count&quot;
 ## FROM &quot;rental&quot;
 ## GROUP BY &quot;customer_id&quot;</code></pre>
-<p>You can use <code>collect</code> to pull down all of the data (tell <code>dbplyr</code> to stop being lazy).</p>
+<p>You can use <code>collect</code> to pull down all of the data (tell <code>dplyr</code> to stop being lazy).</p>
 <pre class="r"><code># First, without collecting
 df1 &lt;- rentaltbl %&gt;% 
   group_by(customer_id) %&gt;% 
@@ -623,10 +634,41 @@ df1</code></pre>
 ## 10         190 27        
 ## # … with more rows</code></pre>
 <p>Looks OK, except:</p>
-<pre class="r"><code>df[1,]</code></pre>
+<pre class="r"><code>df1[1,]</code></pre>
 <p>Gives you:</p>
-<p><code>Error in df[1, ] : object of type 'closure' is not subsettable</code></p>
-<p>Which is a strange error, but it is telling us we need to collect the data.</p>
+<p><code>Error in df1[1, ] : incorrect number of dimensions</code></p>
+<p>It’s the wrong dimensions because <code>df1</code> isn’t actually a data.frame:</p>
+<pre class="r"><code>str(df1)</code></pre>
+<pre><code>## List of 2
+##  $ src:List of 2
+##   ..$ con  :Formal class 'PqConnection' [package &quot;RPostgres&quot;] with 3 slots
+##   .. .. ..@ ptr     :&lt;externalptr&gt; 
+##   .. .. ..@ bigint  : chr &quot;integer64&quot;
+##   .. .. ..@ typnames:'data.frame':   446 obs. of  2 variables:
+##   .. .. .. ..$ oid    : int [1:446] 16 17 18 19 20 21 22 23 24 25 ...
+##   .. .. .. ..$ typname: chr [1:446] &quot;bool&quot; &quot;bytea&quot; &quot;char&quot; &quot;name&quot; ...
+##   ..$ disco: NULL
+##   ..- attr(*, &quot;class&quot;)= chr [1:4] &quot;src_PqConnection&quot; &quot;src_dbi&quot; &quot;src_sql&quot; &quot;src&quot;
+##  $ ops:List of 4
+##   ..$ name: chr &quot;summarise&quot;
+##   ..$ x   :List of 4
+##   .. ..$ name: chr &quot;group_by&quot;
+##   .. ..$ x   :List of 2
+##   .. .. ..$ x   : 'ident' chr &quot;rental&quot;
+##   .. .. ..$ vars: chr [1:7] &quot;rental_id&quot; &quot;rental_date&quot; &quot;inventory_id&quot; &quot;customer_id&quot; ...
+##   .. .. ..- attr(*, &quot;class&quot;)= chr [1:3] &quot;op_base_remote&quot; &quot;op_base&quot; &quot;op&quot;
+##   .. ..$ dots:List of 1
+##   .. .. ..$ customer_id: symbol customer_id
+##   .. ..$ args:List of 1
+##   .. .. ..$ add: logi FALSE
+##   .. ..- attr(*, &quot;class&quot;)= chr [1:3] &quot;op_group_by&quot; &quot;op_single&quot; &quot;op&quot;
+##   ..$ dots:List of 1
+##   .. ..$ count: language ~n()
+##   .. .. ..- attr(*, &quot;.Environment&quot;)=&lt;environment: 0x7fa71e16dce8&gt; 
+##   ..$ args: list()
+##   ..- attr(*, &quot;class&quot;)= chr [1:3] &quot;op_summarise&quot; &quot;op_single&quot; &quot;op&quot;
+##  - attr(*, &quot;class&quot;)= chr [1:5] &quot;tbl_PqConnection&quot; &quot;tbl_dbi&quot; &quot;tbl_sql&quot; &quot;tbl_lazy&quot; ...</code></pre>
+<p>It is telling us we need to collect the data first to actually pull it into R.</p>
 <pre class="r"><code># Then with collecting
 df2 &lt;- rentaltbl %&gt;% 
   group_by(customer_id) %&gt;% 
@@ -665,10 +707,10 @@ custtbl %&gt;%
 ##   &lt;chr&gt;      &lt;chr&gt;     &lt;chr&gt;      
 ## 1 James      Gannon    52137      
 ## 2 Freddie    Duggan    52137</code></pre>
-<p>You could create a table with <code>copy_to</code> (if you have write permissions)</p>
+<p>You could create a table with <code>copy_to</code> (if you have the correct permissions)</p>
 <pre class="r"><code>mytbl &lt;-data.frame(number=1:10 , letter=LETTERS[1:10])
 copy_to(con, mytbl, &quot;mynewtable&quot;)</code></pre>
-<p>By default, it creates a temporary table. But this is a setting you can change, and you can also specify what columns to index on the table.</p>
+<p>By default, it creates a <strong>temporary</strong> table. But this is a setting you can change, and you can also specify what columns to index on the table.</p>
 <p>Disconnect like we normally do</p>
 <pre class="r"><code>dbDisconnect(con)</code></pre>
 </div>

@@ -11,7 +11,7 @@
 
 <meta name="author" content="Christina Maimone" />
 
-<meta name="date" content="2019-08-09" />
+<meta name="date" content="2019-08-12" />
 
 <title>R Database Exercises</title>
 
@@ -377,7 +377,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">R Database Exercises</h1>
 <h4 class="author">Christina Maimone</h4>
-<h4 class="date">2019-08-09</h4>
+<h4 class="date">2019-08-12</h4>
 
 </div>
 
@@ -425,19 +425,18 @@ for (offset in rownums) {
 }
 selectedrows</code></pre>
 <pre><code>##    id  name
-## 1 269 ZNUET
-## 2 475 VPMBT
-## 3 409 AZIQX</code></pre>
+## 1  99 UIBJN
+## 2 236 YLHQP
+## 3 596 BYEAM</code></pre>
 <p>We used paste function above because we have control over offset – it would be better to use a prepared query, but since we aren’t getting input from a user, it’s not super dangerous.</p>
 <p>An alternative approach, which could work well if the table isn’t too big, is to retrieve all of the IDs, and then randomly sample the IDs, and retrieve just those rows.</p>
 <pre class="r"><code>dbDisconnect(con)</code></pre>
 </div>
 </div>
-<div id="exercise-dbplyr" class="section level2">
-<h2>Exercise: <code>dbplyr</code></h2>
-<p>Connect to the dvdrental database. Repeat <a href="https://github.com/nuitrcs/databases_workshop/blob/master/sql/part2_exercises_with_answers.md">Exercise: Joining and Grouping 2</a> from Part 2 using <code>dbplyr</code>.</p>
-<pre class="r"><code>library(dbplyr)
-library(dplyr)</code></pre>
+<div id="exercise-dplyr" class="section level2">
+<h2>Exercise: <code>dplyr</code></h2>
+<p>Connect to the dvdrental database. Repeat <a href="https://github.com/nuitrcs/databases_workshop/blob/master/sql/part2_exercises_with_answers.md">Exercise: Joining and Grouping 2</a> from Part 2 using <code>dplyr</code>.</p>
+<pre class="r"><code>library(dplyr)</code></pre>
 <div id="solution-1" class="section level4">
 <h4>Solution</h4>
 <p>Set your connection information as appropriate for the workshop:</p>

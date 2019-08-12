@@ -165,6 +165,9 @@ AND NOT favorite;
 One option (you could also do this with USING):
 
 ```sql
+ALTER TABLE course
+DROP last_taught;
+
 DELETE FROM course_offering
 WHERE course_id NOT IN 
  (SELECT course_id 

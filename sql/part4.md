@@ -451,6 +451,6 @@ WHERE segment_id IN
 
 Using the `food` table created, altered, and updated above, delete any white foods that aren't a favorite.
 
-Using the `course` table created above, delete any courses that were last offered before 2017 (start date before 2017).  Note that you'll also need to delete entries from course\_offering table too.  Be careful not to delete old offerings of courses you aren't deleting.
+Using the `course` table created above, first alter the table to remove the last\_taught column.  Then delete any courses that were last offered before 2017 (start date before 2017).  Note that you'll also need to delete entries from course\_offering table too.  Be careful not to delete old offerings of courses you aren't deleting.
 
 [Answers](part4_exercises_with_answers.md)

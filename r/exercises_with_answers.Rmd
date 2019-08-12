@@ -91,12 +91,11 @@ dbDisconnect(con)
 ```
 
 
-## Exercise: `dbplyr`
+## Exercise: `dplyr`
 
-Connect to the dvdrental database.  Repeat [Exercise: Joining and Grouping 2](https://github.com/nuitrcs/databases_workshop/blob/master/sql/part2_exercises_with_answers.md) from Part 2 using `dbplyr`. 
+Connect to the dvdrental database.  Repeat [Exercise: Joining and Grouping 2](https://github.com/nuitrcs/databases_workshop/blob/master/sql/part2_exercises_with_answers.md) from Part 2 using `dplyr`. 
 
 ```{r, echo=TRUE, eval=TRUE}
-library(dbplyr)
 library(dplyr)
 ```
 

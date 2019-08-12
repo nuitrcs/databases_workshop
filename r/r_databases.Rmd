@@ -35,7 +35,7 @@ library(RPostgres)
 
 We connect with a function call like the following.
 
-Note: this code was generated on my local machine connected to a local copy of the database.
+Note: this code was generated on my local machine connected to a local copy of the database.  Your connection details will be different.  Note I also have permissions to modify this database.
 
 ```{r}
 con <- dbConnect(RPostgres::Postgres(), host="localhost", dbname="dvdrental")
@@ -88,7 +88,7 @@ If you want part of your query to be determined by a variable -- especially if i
 ```{r}
 # YES
 myquery <- dbSendQuery(con, "select * from actor where actor_id = $1")
-dbBind(myquery, list(5))
+dbBind(myquery, list(4))
 dbFetch(myquery)
 ```
 
@@ -124,8 +124,12 @@ Which are ok, but could get annoying.
 
 If you're not a superuser on the `dvdrental` database, just try connecting to a database you can modify. Then the basic function is `dbSendQuery` for any command you want to execute where you aren't retrieving results.
 
+Note that by default, statements take effect immediately - they are not in a transaction that you need to commit.  To use transactions, see below.
+
 ```{r, eval=FALSE}
-dbSendQuery(con, statement="update actor set actor_id=5000 where actor_id=5")
+res <- dbSendQuery(con, statement="update actor set first_name='Jenn' where actor_id=4")
+print(res)  # contains info on result of update
+dbClearResult(res)  # prevent warning messages
 ```
 
 To create a table, you can give it a data frame
@@ -144,6 +148,28 @@ dbRemoveTable(con, "mynewtable")
 ```
 
 
+## Transactions
+
+There are also methods for managing transactions if you need: `dbBegin`, `dbRollback`, `dbCommit`. Transactions are key for when you need to be sure that a sequence of SQL commands (e.g. `UPDATE`, `CREATE`, `DROP`, `DELETE`, etc.) execute correctly before they're made permanent (i.e. "committed").
+
+
+```{r, eval=FALSE}
+dbBegin(con)
+dbWriteTable(con, "mynewtable", mytbl)
+dbRollback(con)
+dbGetQuery(con, "SELECT * FROM mynewtable")
+```
+
+The above will produce error:
+
+```
+Error in result_create(conn@ptr, statement) : 
+  Failed to prepare query: ERROR:  relation "mynewtable" does not exist
+LINE 1: SELECT * FROM mynewtable
+```
+
+because the transaction was rolled back, not committed.
+
 ## Close Connection
 
 Connections will get closed when you quit R, but it's good practice to explicitly close them.
@@ -152,9 +178,7 @@ Connections will get closed when you quit R, but it's good practice to explicitl
 dbDisconnect(con)
 ```
 
-## Transactions
 
-There are also methods for managing transactions if you need: `dbBegin`, `dbRollback`, `dbCommit`. Transactions are key for when you need to be sure that a sequence of SQL commands (e.g. `UPDATE`, `CREATE`, `DROP`, `DELETE`, etc.) execute correctly before they're made permanent (i.e. "committed").
 
 
 # Use `dplyr`
@@ -162,7 +186,7 @@ There are also methods for managing transactions if you need: `dbBegin`, `dbRoll
 For more complete info, see the [RStudio databases site](http://db.rstudio.com/dplyr/).
 
 ```{r, eval=FALSE}
-needToInstall <- c("dbplyr", "tidyverse")
+needToInstall <- c("tidyverse")
 needToInstall <- needToInstall[which(!needToInstall %in% installed.packages())]
 if(length(needToInstall) > 0){
   sapply(needToInstall, install.packages)
@@ -172,7 +196,6 @@ if(length(needToInstall) > 0){
 
 ```{r, message=FALSE, warning=FALSE}
 library(tidyverse)
-library(dbplyr)
 ```
 
 First, connect like normal
@@ -193,7 +216,7 @@ If we look at this object, it doesn't have data in it:
 str(actortbl)
 ```
 
-It just has connection information.  `dbplyr` will try to perform operations within the database where it can, instead of pulling all of the data into R.
+It just has connection information.  `dplyr` will try to perform operations within the database where it can, instead of pulling all of the data into R.
 
 Yet you can print the object and see observations:
 
@@ -229,7 +252,7 @@ rentaltbl %>%
   show_query()
 ```
 
-You can use `collect` to pull down all of the data (tell `dbplyr` to stop being lazy).
+You can use `collect` to pull down all of the data (tell `dplyr` to stop being lazy).
 
 ```{r, echo=TRUE}
 # First, without collecting
@@ -242,14 +265,20 @@ df1
 Looks OK, except:
 
 ```{r, eval=FALSE}
-df[1,]
+df1[1,]
 ```
 
 Gives you:
 
-`Error in df[1, ] : object of type 'closure' is not subsettable`
+`Error in df1[1, ] : incorrect number of dimensions`
 
-Which is a strange error, but it is telling us we need to collect the data.
+It's the wrong dimensions because `df1` isn't actually a data.frame:
+
+```{r}
+str(df1)
+```
+
+It is telling us we need to collect the data first to actually pull it into R.
 
 ```{r, echo=TRUE}
 # Then with collecting
@@ -276,14 +305,14 @@ custtbl %>%
 ```
 
 
-You could create a table with `copy_to` (if you have write permissions)
+You could create a table with `copy_to` (if you have the correct permissions)
 
 ```{r, scho=TRUE, eval=FALSE}
 mytbl <-data.frame(number=1:10 , letter=LETTERS[1:10])
 copy_to(con, mytbl, "mynewtable")
 ```
 
-By default, it creates a temporary table.  But this is a setting you can change, and you can also specify what columns to index on the table.  
+By default, it creates a **temporary** table.  But this is a setting you can change, and you can also specify what columns to index on the table.  
 
 
 Disconnect like we normally do
