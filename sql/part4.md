@@ -30,14 +30,14 @@ Let's see how transactions work.  We'll create a table and add some data to work
 
 ```sql
 CREATE TABLE color (
-	id serial primary key,
-	name text,
-	hex text -- hex color specification used with html
+    id serial primary key,
+    name text,
+    hex text -- hex color specification used with html
 );
 
 INSERT INTO color (name, hex) 
 VALUES ('beige', '#F5F5DC'), ('coral', '#FF7F50'), 
-		('cyan', '#00FFFF'), ('gold', '#FFD700');
+        ('cyan', '#00FFFF'), ('gold', '#FFD700');
 ```
 
 ```sql
@@ -154,14 +154,14 @@ Ok - let's recreate it to see what else we can alter:
 
 ```sql
 CREATE TABLE color (
-	id serial primary key,
-	name text,
-	hex text -- hex color specification used with html
+    id serial primary key,
+    name text,
+    hex text -- hex color specification used with html
 );
 
 INSERT INTO color (name, hex) 
 VALUES ('beige', '#F5F5DC'), ('coral', '#FF7F50'), 
-		('cyan', '#00FFFF'), ('gold', '#FFD700');
+        ('cyan', '#00FFFF'), ('gold', '#FFD700');
 ```
 
 ```sql
@@ -198,23 +198,22 @@ Then add a new text column `color`.  Then rename the `color` column you just cre
 
 ```sql
 CREATE TABLE food (
-	id serial primary key,
-	name text not null,
-	type text,
-	favorite boolean default false	
+    id serial primary key,
+    name text not null,
+    type text,
+    favorite boolean default false    
 );
 
 INSERT INTO food (name, type) 
-VALUES 
-	('broccoli','vegetable'), 
-	('lime', 'fruit'), 
-	('green beans', 'vegetable'), 
-	('milk', 'dairy'), 
-	('yogurt', 'dairy'), 
-	('banana', 'fruit'), 
-	('lemon', 'fruit'), 
-	('tortilla', 'carbohydrate'), 
-	('rice', 'carbohydrate');
+VALUES ('broccoli','vegetable'), 
+    ('lime', 'fruit'), 
+    ('green beans', 'vegetable'), 
+    ('milk', 'dairy'), 
+    ('yogurt', 'dairy'), 
+    ('banana', 'fruit'), 
+    ('lemon', 'fruit'), 
+    ('tortilla', 'carbohydrate'), 
+    ('rice', 'carbohydrate');
 ``` 
 
 [Answers](part4_exercises_with_answers.md)
@@ -229,17 +228,17 @@ Let's create a table and add some data to play with:
 
 ```sql
 CREATE TABLE workshop (
-	id serial primary key,
-	name text not null,
-	date date,
-	beginner boolean default false
+    id serial primary key,
+    name text not null,
+    date date,
+    beginner boolean default false
 );
 
 INSERT INTO workshop (name, date)
 VALUES ('Intro to Python', '2017-07-10'), 
-		('Python Data Analysis', '2017-08-03'), 
-		('Databases', '2017-08-17'), 
-		('Intro to R', '2017-09-07');
+        ('Python Data Analysis', '2017-08-03'), 
+        ('Databases', '2017-08-17'), 
+        ('Intro to R', '2017-09-07');
 ```
 
 This gives us:
@@ -378,36 +377,36 @@ Create and populate tables using the supplied code below.
 
 ```sql
 CREATE TABLE course (
-	id int primary key,
-	name text not null,
-	last_taught date
+    id int primary key,
+    name text not null,
+    last_taught date
 );
 
 INSERT INTO course (id, name) 
 VALUES 
-	(1, 'Chemistry'),
-	(2, 'Physics'),
-	(3, 'History'),
-	(4, 'English'),
-	(5, 'French');
-	
+    (1, 'Chemistry'),
+    (2, 'Physics'),
+    (3, 'History'),
+    (4, 'English'),
+    (5, 'French');
+    
 CREATE TABLE course_offering (
-	course_id int references course(id),
-	quarter_name text,
-	date date,
-	primary key (course_id, quarter_name)
+    course_id int references course(id),
+    quarter_name text,
+    date date,
+    primary key (course_id, quarter_name)
 );
 
 INSERT INTO course_offering 
 VALUES 
-	(1, 'Spring 2015', '2015-03-01'),
-	(1, 'Spring 2017', '2017-03-01'),
-	(2, 'Fall 2016', '2016-09-01'),
-	(2, 'Spring 2017', '2017-03-01'),
-	(3, 'Spring 2016', '2016-03-01'),
-	(4, 'Winter 2015', '2015-01-01'),
-	(4, 'Winter 2017', '2017-01-01'),
-	(4, 'Winter 2016', '2016-01-01');
+    (1, 'Spring 2015', '2015-03-01'),
+    (1, 'Spring 2017', '2017-03-01'),
+    (2, 'Fall 2016', '2016-09-01'),
+    (2, 'Spring 2017', '2017-03-01'),
+    (3, 'Spring 2016', '2016-03-01'),
+    (4, 'Winter 2015', '2015-01-01'),
+    (4, 'Winter 2017', '2017-01-01'),
+    (4, 'Winter 2016', '2016-01-01');
 ```
 
 
