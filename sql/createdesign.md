@@ -126,7 +126,8 @@ LeBron | James | 81 | 249 | Lakers | Los Angeles | 2018 |
 Tim | Duncan | 82 | 256 | Spurs | San Antonio | 1997 | 2016
 Chris | Paul | 72 | 175 | Hornets | New Orleans | 2005 | 2011
 Chris | Paul | 72 | 175 | Clippers | Los Angeles | 2011 | 2017
-Chris | Paul | 72 | 175 | Rockets | Houston | 2017 | 
+Chris | Paul | 72 | 175 | Rockets | Houston | 2017 | 2019
+Chris | Paul | 72 | 175 | Thunder | Oklahoma City | 2019 | 
 
 
 What tables could we make to hold this data?
