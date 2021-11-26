@@ -19,9 +19,11 @@ Challenge: How many actors are in more films than actor id 47?  Hint: this takes
 #### Solution
 
 ```sql
-SELECT film_id FROM film_actor
-WHERE actor_id=129
-AND film_id IN (SELECT film_id FROM film_actor WHERE actor_id=195);
+SELECT title FROM film 
+WHERE film_id IN (
+    SELECT film_id FROM film_actor
+    WHERE actor_id=129
+    AND film_id IN (SELECT film_id FROM film_actor WHERE actor_id=195));
 ```
 
 Challenge: 
